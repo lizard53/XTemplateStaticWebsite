@@ -1,0 +1,45 @@
+import js from '@eslint/js';
+
+export default [
+  js.configs.recommended,
+  {
+    languageOptions: {
+      ecmaVersion: 2021,
+      sourceType: 'script',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        console: 'readonly',
+        IntersectionObserver: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        URL: 'readonly',
+        PerformanceObserver: 'readonly',
+        performance: 'readonly',
+        CustomEvent: 'readonly',
+        gtag: 'readonly',
+        plausible: 'readonly',
+      },
+    },
+    rules: {
+      indent: ['error', 2],
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
+      'no-console': 'warn',
+      'no-unused-vars': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'prefer-arrow-callback': 'error',
+      'prefer-template': 'error',
+      'object-shorthand': 'error',
+      'prefer-destructuring': ['error', { object: true, array: false }],
+    },
+  },
+];

@@ -1,0 +1,69 @@
+{
+  "name": "dharambhushan-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Professional portfolio for Dharam Bhushan - AWS Engineering Manager & AI/ML Solutions Architect",
+  "scripts": {
+    "dev": "npx serve -p 3000",
+    "build": "node scripts/build.js",
+    "optimize": "npm run optimize:images && npm run optimize:css && npm run optimize:js",
+    "optimize:images": "echo 'Image optimization placeholder - use ImageOptim or similar tool'",
+    "optimize:css": "npx clean-css-cli -o dist/css/main.min.css css/main.css css/components.css css/themes.css css/animations.css",
+    "optimize:js": "npx terser js/main.js js/theme-toggle.js js/animations.js js/analytics.js -o dist/js/bundle.min.js --compress --mangle",
+    "deploy:s3": "aws s3 sync . s3://dharambhushan.com --exclude 'node_modules/*' --exclude '.git/*' --exclude 'scripts/*' --cache-control 'public, max-age=31536000'",
+    "invalidate:cloudflare": "aws cloudfront create-invalidation --distribution-id ${CF_DISTRIBUTION_ID} --paths '/*'",
+    "deploy": "npm run build && npm run deploy:s3 && npm run invalidate:cloudflare",
+    "validate": "npx html-validate index.html && npx stylelint 'css/**/*.css'",
+    "lighthouse": "npx lighthouse https://dharambhushan.com --view",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
+    "lint:html": "npx htmlhint '*.html'",
+    "lint:css": "npx stylelint 'css/**/*.css'",
+    "lint:js": "npx eslint 'js/**/*.js'",
+    "lint:fix": "npm run lint:css -- --fix && npm run lint:js -- --fix",
+    "format": "npx prettier --write '**/*.{html,css,js,json,md}'",
+    "format:check": "npx prettier --check '**/*.{html,css,js,json,md}'",
+    "validate:all": "npm run format:check && npm run lint",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "portfolio",
+    "aws",
+    "engineering-manager",
+    "ai-ml",
+    "solutions-architect"
+  ],
+  "author": "Dharam Bhushan",
+  "license": "MIT",
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "html-validate": "^8.11.1",
+    "htmlhint": "^1.7.1",
+    "husky": "^9.1.7",
+    "lighthouse": "^11.5.0",
+    "lint-staged": "^16.2.4",
+    "prettier": "^3.6.2",
+    "serve": "^14.2.1",
+    "stylelint": "^16.2.0",
+    "stylelint-config-standard": "^39.0.1",
+    "terser": "^5.27.0"
+  },
+  "lint-staged": {
+    "*.html": [
+      "htmlhint",
+      "prettier --write"
+    ],
+    "*.css": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "*.js": [
+      "bash -c 'if [[ \"$0\" != *\"eslint.config.js\" ]]; then eslint --fix \"$0\" && prettier --write \"$0\"; else prettier --write \"$0\"; fi'"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}

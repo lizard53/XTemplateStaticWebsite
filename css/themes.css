@@ -1,0 +1,290 @@
+/* ==========================================
+   THEME STYLES - dharambhushan.com
+   Light/Dark mode color schemes
+   ========================================== */
+
+/* ==========================================
+   DARK THEME (Default)
+   ========================================== */
+
+[data-theme='dark'] {
+  /* AWS-inspired dark palette */
+  --color-primary: #f90;
+  --color-text: #e8e8e8;
+  --color-text-secondary: #a0a0a0;
+  --color-background: #0f1419;
+  --color-surface: #1a1f26;
+  --color-border: #2d3339;
+
+  /* AWS accents */
+  --aws-orange: #f90;
+  --aws-dark-blue: #527fff;
+  --aws-light-blue: #69f;
+
+  /* Shadows for dark mode */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 40%);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 50%);
+}
+
+/* Dark mode specific adjustments */
+[data-theme='dark'] .site-header {
+  background: rgb(15 20 25 / 95%);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme='dark'] .card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .card:hover {
+  box-shadow: 0 10px 30px rgb(255 153 0 / 10%);
+}
+
+[data-theme='dark'] .project-icon {
+  background: rgb(255 153 0 / 15%);
+}
+
+[data-theme='dark'] .badge-aws {
+  background: rgb(255 153 0 / 20%);
+  color: #ffb84d;
+}
+
+[data-theme='dark'] .badge-ai {
+  background: rgb(82 127 255 / 20%);
+  color: #8fa9ff;
+}
+
+[data-theme='dark'] .badge-leadership {
+  background: rgb(82 127 255 / 15%);
+  color: #69f;
+}
+
+[data-theme='dark'] code {
+  background: rgb(255 153 0 / 10%);
+  color: #ffb84d;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+/* ==========================================
+   LIGHT THEME
+   ========================================== */
+
+[data-theme='light'] {
+  /* Professional light palette */
+  --color-primary: #f90;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-background: #fff;
+  --color-surface: #f5f5f5;
+  --color-border: #e0e0e0;
+
+  /* AWS accents */
+  --aws-orange: #f90;
+  --aws-dark-blue: #232f3e;
+  --aws-light-blue: #527fff;
+
+  /* Shadows for light mode */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 5%);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 7%);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
+}
+
+[data-theme='light'] .site-header {
+  background: rgb(255 255 255 / 95%);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme='light'] .project-icon {
+  background: rgb(255 153 0 / 10%);
+}
+
+[data-theme='light'] .badge-aws {
+  background: rgb(255 153 0 / 10%);
+  color: #cc7a00;
+}
+
+[data-theme='light'] .badge-ai {
+  background: rgb(82 127 255 / 10%);
+  color: #4169cc;
+}
+
+[data-theme='light'] .badge-leadership {
+  background: rgb(35 47 62 / 8%);
+  color: #232f3e;
+}
+
+[data-theme='light'] code {
+  background: rgb(255 153 0 / 8%);
+  color: #cc7a00;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+/* ==========================================
+   THEME TRANSITION
+   ========================================== */
+
+/* Smooth theme transitions */
+html {
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+body {
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+.site-header,
+.card,
+.tag,
+.badge,
+.btn {
+  transition:
+    background-color 300ms ease,
+    color 300ms ease,
+    border-color 300ms ease,
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+/* ==========================================
+   ACCESSIBILITY & CONTRAST
+   ========================================== */
+
+/* Ensure sufficient contrast in both themes */
+[data-theme='dark'] a:focus-visible,
+[data-theme='light'] a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Focus states */
+[data-theme='dark'] button:focus-visible,
+[data-theme='light'] button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Selection colors */
+[data-theme='dark'] ::selection {
+  background: rgb(255 153 0 / 30%);
+  color: var(--color-text);
+}
+
+[data-theme='light'] ::selection {
+  background: rgb(255 153 0 / 20%);
+  color: var(--color-text);
+}
+
+/* ==========================================
+   SCROLLBAR THEMING
+   ========================================== */
+
+/* Dark theme scrollbar */
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 12px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Light theme scrollbar */
+[data-theme='light'] ::-webkit-scrollbar {
+  width: 12px;
+}
+
+[data-theme='light'] ::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+
+[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* ==========================================
+   SYNTAX HIGHLIGHTING (for code blocks)
+   ========================================== */
+
+[data-theme='dark'] pre {
+  background: #1a1f26;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  overflow-x: auto;
+}
+
+[data-theme='light'] pre {
+  background: #f5f5f5;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  overflow-x: auto;
+}
+
+/* ==========================================
+   PRINT STYLES
+   ========================================== */
+
+@media print {
+  [data-theme='dark'],
+  [data-theme='light'] {
+    --color-text: #000;
+    --color-background: #fff;
+    --color-primary: #f90;
+  }
+
+  .theme-toggle,
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
+/* ==========================================
+   PREFERS COLOR SCHEME
+   ========================================== */
+
+/* Respect system preferences if no theme is set */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --color-primary: #f90;
+    --color-text: #1a1a1a;
+    --color-text-secondary: #4a4a4a;
+    --color-background: #fff;
+    --color-surface: #f5f5f5;
+    --color-border: #e0e0e0;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-primary: #f90;
+    --color-text: #e8e8e8;
+    --color-text-secondary: #a0a0a0;
+    --color-background: #0f1419;
+    --color-surface: #1a1f26;
+    --color-border: #2d3339;
+  }
+}
