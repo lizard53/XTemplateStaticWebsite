@@ -51,15 +51,11 @@
       }
 
       .mermaid {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        display: block;
+        text-align: center;
         margin: 0;
         padding: 0;
-        border: none;
         background: transparent;
-        font-family: inherit;
-        overflow: visible;
       }
 
       .diagram-legend {
@@ -157,74 +153,27 @@
           </div>
 
           <div class="mermaid-wrapper">
-            <pre class="mermaid">
-graph TB
-  subgraph "User Data Sources"
-    A1[User Personal Interest]
-    A2[User Transcript Data]
-    A3[Learning History]
-  end
-
-  subgraph "Data Processing Layer"
-    B1[Data Aggregation Service]
-    B2[Feature Engineering]
-    B3[User Profile Builder]
-  end
-
-  subgraph "ML Models & Algorithms"
-    C1[Association Rule Mining]
-    C2[Amazon Personalize]
-    C3[Collaborative Filtering]
-    C4[Content-Based Filtering]
-  end
-
-  subgraph "Recommendation Engine"
-    D1[Model Ensemble]
-    D2[Ranking Algorithm]
-    D3[Diversity Filter]
-  end
-
-  subgraph "Output"
-    E1[Personalized Training Recommendations]
-    E2[Learning Path Suggestions]
-    E3[Skill Gap Analysis]
-  end
-
-  A1 --> B1
-  A2 --> B1
-  A3 --> B1
-
-  B1 --> B2
-  B2 --> B3
-
-  B3 --> C1
-  B3 --> C2
-  B3 --> C3
-  B3 --> C4
-
-  C1 --> D1
-  C2 --> D1
-  C3 --> D1
-  C4 --> D1
-
-  D1 --> D2
-  D2 --> D3
-
-  D3 --> E1
-  D3 --> E2
-  D3 --> E3
-
-  style A1 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
-  style A2 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
-  style A3 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
-  style C1 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
-  style C2 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
-  style C3 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
-  style C4 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
-  style E1 fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
-  style E2 fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
-  style E3 fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
-            </pre>
+            <div class="mermaid">
+              graph TB subgraph "User Data Sources" A1[User Personal Interest] A2[User Transcript
+              Data] A3[Learning History] end subgraph "Data Processing Layer" B1[Data Aggregation
+              Service] B2[Feature Engineering] B3[User Profile Builder] end subgraph "ML Models &
+              Algorithms" C1[Association Rule Mining] C2[Amazon Personalize] C3[Collaborative
+              Filtering] C4[Content-Based Filtering] end subgraph "Recommendation Engine" D1[Model
+              Ensemble] D2[Ranking Algorithm] D3[Diversity Filter] end subgraph "Output"
+              E1[Personalized Training Recommendations] E2[Learning Path Suggestions] E3[Skill Gap
+              Analysis] end A1 --> B1 A2 --> B1 A3 --> B1 B1 --> B2 B2 --> B3 B3 --> C1 B3 --> C2 B3
+              --> C3 B3 --> C4 C1 --> D1 C2 --> D1 C3 --> D1 C4 --> D1 D1 --> D2 D2 --> D3 D3 --> E1
+              D3 --> E2 D3 --> E3 style A1 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
+              style A2 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff style A3
+              fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff style C1
+              fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff style C2
+              fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff style C3
+              fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff style C4
+              fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff style E1
+              fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff style E2
+              fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff style E3
+              fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
+            </div>
           </div>
 
           <div class="diagram-legend">
