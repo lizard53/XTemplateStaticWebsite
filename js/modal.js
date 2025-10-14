@@ -46,7 +46,7 @@ class ImageModal {
     // Add click handlers to output buttons
     this.outputButtons.forEach(button => {
       button.addEventListener('click', () => {
-        const card = button.closest('.clickable-card');
+        const card = button.closest('[data-modal]');
         if (card) {
           this.openModal(card, 'output');
         }
@@ -56,7 +56,7 @@ class ImageModal {
     // Add click handlers to architecture buttons
     this.architectureButtons.forEach(button => {
       button.addEventListener('click', () => {
-        const card = button.closest('.clickable-card');
+        const card = button.closest('[data-modal]');
         if (card) {
           this.openModal(card, 'architecture');
         }
