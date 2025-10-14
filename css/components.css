@@ -674,6 +674,24 @@
   transform: translateX(2px);
 }
 
+/* Diagram Image Styles */
+.diagram-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-lg);
+  background: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.diagram-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: calc(var(--border-radius) / 2);
+  display: block;
+}
+
 /* ==========================================
    RESPONSIVE ADJUSTMENTS
    ========================================== */
