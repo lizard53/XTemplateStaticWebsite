@@ -648,6 +648,8 @@
 .project-card .project-links {
   display: flex;
   justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
   margin-top: var(--space-md);
   padding-top: var(--space-md);
   border-top: 1px solid var(--color-border);
@@ -666,12 +668,24 @@
   border-radius: calc(var(--border-radius) / 2);
   transition: all var(--transition-base);
   background: transparent;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .diagram-link:hover {
   background: var(--color-primary);
   color: var(--color-background);
   transform: translateX(2px);
+}
+
+.output-button {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.output-button:hover {
+  background: var(--color-primary);
+  color: var(--color-background);
 }
 
 /* Diagram Image Styles */

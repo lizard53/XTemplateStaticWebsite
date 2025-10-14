@@ -16,6 +16,7 @@ class ImageModal {
     this.modalClose = this.modal?.querySelector('.modal-close');
     this.modalOverlay = this.modal?.querySelector('.modal-overlay');
     this.clickableCards = document.querySelectorAll('.clickable-card');
+    this.outputButtons = document.querySelectorAll('.output-button');
 
     // Image mapping for different modals
     this.imageMap = {
@@ -30,7 +31,22 @@ class ImageModal {
   init() {
     // Add click handlers to clickable cards
     this.clickableCards.forEach(card => {
-      card.addEventListener('click', () => this.openModal(card));
+      card.addEventListener('click', e => {
+        // Don't open modal if clicking on a button or link
+        if (!e.target.closest('button') && !e.target.closest('a')) {
+          this.openModal(card);
+        }
+      });
+    });
+
+    // Add click handlers to output buttons
+    this.outputButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const card = button.closest('.clickable-card');
+        if (card) {
+          this.openModal(card);
+        }
+      });
     });
 
     // Close modal handlers
