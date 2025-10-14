@@ -17,10 +17,14 @@ class ImageModal {
     this.modalOverlay = this.modal?.querySelector('.modal-overlay');
     this.clickableCards = document.querySelectorAll('.clickable-card');
     this.outputButtons = document.querySelectorAll('.output-button');
+    this.architectureButtons = document.querySelectorAll('.architecture-button');
 
     // Image mapping for different modals
     this.imageMap = {
-      'recommendation-engine': '/assets/images/recommendation_engine.png',
+      'recommendation-engine': {
+        output: '/assets/images/recommendation_engine.png',
+        architecture: '/assets/images/recommendation_engine__architecture.png',
+      },
     };
 
     if (this.modal) {
@@ -34,7 +38,7 @@ class ImageModal {
       card.addEventListener('click', e => {
         // Don't open modal if clicking on a button or link
         if (!e.target.closest('button') && !e.target.closest('a')) {
-          this.openModal(card);
+          this.openModal(card, 'output');
         }
       });
     });
@@ -44,7 +48,17 @@ class ImageModal {
       button.addEventListener('click', () => {
         const card = button.closest('.clickable-card');
         if (card) {
-          this.openModal(card);
+          this.openModal(card, 'output');
+        }
+      });
+    });
+
+    // Add click handlers to architecture buttons
+    this.architectureButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const card = button.closest('.clickable-card');
+        if (card) {
+          this.openModal(card, 'architecture');
         }
       });
     });
@@ -61,15 +75,18 @@ class ImageModal {
     });
   }
 
-  openModal(card) {
+  openModal(card, imageType = 'output') {
     const modalId = card.dataset.modal;
-    const imageSrc = this.imageMap[modalId];
+    const imageData = this.imageMap[modalId];
 
-    if (imageSrc) {
-      this.modalImage.src = imageSrc;
-      this.modal.classList.add('active');
-      this.modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    if (imageData) {
+      const imageSrc = typeof imageData === 'string' ? imageData : imageData[imageType];
+      if (imageSrc) {
+        this.modalImage.src = imageSrc;
+        this.modal.classList.add('active');
+        this.modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      }
     }
   }
 

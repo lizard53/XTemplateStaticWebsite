@@ -678,12 +678,14 @@
   transform: translateX(2px);
 }
 
-.output-button {
+.output-button,
+.architecture-button {
   color: var(--color-primary);
   border-color: var(--color-primary);
 }
 
-.output-button:hover {
+.output-button:hover,
+.architecture-button:hover {
   background: var(--color-primary);
   color: var(--color-background);
 }
