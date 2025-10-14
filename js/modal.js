@@ -1,0 +1,76 @@
+/**
+ * Modal Handler - dharambhushan.com
+ * Handles image modal functionality for project cards
+ */
+
+'use strict';
+
+// ==========================================
+// IMAGE MODAL HANDLER
+// ==========================================
+
+class ImageModal {
+  constructor() {
+    this.modal = document.getElementById('image-modal');
+    this.modalImage = document.getElementById('modal-image');
+    this.modalClose = this.modal?.querySelector('.modal-close');
+    this.modalOverlay = this.modal?.querySelector('.modal-overlay');
+    this.clickableCards = document.querySelectorAll('.clickable-card');
+
+    // Image mapping for different modals
+    this.imageMap = {
+      'recommendation-engine': '/assets/images/recommendation_engine.png',
+    };
+
+    if (this.modal) {
+      this.init();
+    }
+  }
+
+  init() {
+    // Add click handlers to clickable cards
+    this.clickableCards.forEach(card => {
+      card.addEventListener('click', () => this.openModal(card));
+    });
+
+    // Close modal handlers
+    this.modalClose?.addEventListener('click', () => this.closeModal());
+    this.modalOverlay?.addEventListener('click', () => this.closeModal());
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+        this.closeModal();
+      }
+    });
+  }
+
+  openModal(card) {
+    const modalId = card.dataset.modal;
+    const imageSrc = this.imageMap[modalId];
+
+    if (imageSrc) {
+      this.modalImage.src = imageSrc;
+      this.modal.classList.add('active');
+      this.modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+  }
+
+  closeModal() {
+    this.modal.classList.remove('active');
+    this.modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = ''; // Restore scrolling
+  }
+}
+
+// ==========================================
+// INITIALIZE
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  const imageModal = new ImageModal();
+});
+
+// Export for external use
+window.ImageModal = ImageModal;

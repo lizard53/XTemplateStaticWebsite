@@ -72,33 +72,35 @@
         <div class="container">
           <div class="projects-grid">
             <!-- Service Card 1 -->
-            <div class="card project-card reveal">
+            <div class="card project-card reveal clickable-card" data-modal="recommendation-engine">
               <div class="project-header">
                 <div class="project-icon">🤖</div>
               </div>
-              <h3 class="card-title">AI/ML Service 1</h3>
+              <h3 class="card-title">Skill Builder Recommendation Engine</h3>
               <p class="card-description">
-                Enterprise-scale machine learning platform enabling rapid model development and
-                deployment. Serving 1M+ predictions daily.
+                AI-powered recommendation system that personalizes learning paths for AWS training.
+                Built using collaborative filtering and content-based algorithms to match learners
+                with relevant courses.
               </p>
               <div class="project-impact">
                 <p class="project-impact-title">Impact</p>
                 <div class="project-metrics">
                   <div class="metric">
-                    <span class="metric-value">1M+</span>
-                    <span class="metric-label">Daily Predictions</span>
+                    <span class="metric-value">50K+</span>
+                    <span class="metric-label">Daily Recommendations</span>
                   </div>
                   <div class="metric">
-                    <span class="metric-value">99.9%</span>
-                    <span class="metric-label">Uptime</span>
+                    <span class="metric-value">35%</span>
+                    <span class="metric-label">Engagement Lift</span>
                   </div>
                 </div>
               </div>
               <div class="tags">
-                <span class="tag">ML Platform</span>
-                <span class="tag">SageMaker</span>
-                <span class="tag">Python</span>
+                <span class="tag">Recommendation System</span>
+                <span class="tag">Machine Learning</span>
+                <span class="tag">Personalization</span>
               </div>
+              <div class="click-hint">Click to view architecture</div>
             </div>
 
             <!-- Service Card 2 -->
@@ -246,6 +248,22 @@
       </section>
     </main>
 
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <div class="modal-body">
+          <img
+            id="modal-image"
+            src="/assets/images/recommendation_engine.png"
+            alt="Project Architecture"
+            class="modal-image"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="site-footer">
       <div class="container">
@@ -277,6 +295,7 @@
     <script src="/js/main.js" defer></script>
     <script src="/js/theme-toggle.js" defer></script>
     <script src="/js/animations.js" defer></script>
+    <script src="/js/modal.js" defer></script>
     <script src="/js/analytics.js" defer></script>
   </body>
 </html>
