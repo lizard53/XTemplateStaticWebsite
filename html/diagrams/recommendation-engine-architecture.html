@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Skill Builder Recommendation Engine Architecture | Dharam Bhushan</title>
+    <meta
+      name="description"
+      content="Architecture diagram for AWS Skill Builder Recommendation Engine"
+    />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/themes.css" />
+    <link rel="stylesheet" href="/css/animations.css" />
+
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+      .diagram-container {
+        padding: var(--space-xl) 0;
+        min-height: 80vh;
+      }
+
+      .diagram-header {
+        text-align: center;
+        margin-bottom: var(--space-xl);
+      }
+
+      .diagram-title {
+        font-size: var(--text-3xl);
+        font-weight: 700;
+        color: var(--color-text);
+        margin-bottom: var(--space-sm);
+      }
+
+      .diagram-subtitle {
+        font-size: var(--text-base);
+        color: var(--color-text-secondary);
+      }
+
+      .mermaid-wrapper {
+        background: var(--color-surface);
+        border-radius: var(--border-radius);
+        padding: var(--space-xl);
+        box-shadow: var(--shadow-lg);
+        overflow-x: auto;
+      }
+
+      .mermaid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        overflow: visible;
+      }
+
+      .diagram-legend {
+        margin-top: var(--space-xl);
+        padding: var(--space-lg);
+        background: var(--color-surface);
+        border-radius: var(--border-radius);
+        border-left: 4px solid var(--color-primary);
+      }
+
+      .legend-title {
+        font-size: var(--text-lg);
+        font-weight: 600;
+        color: var(--color-text);
+        margin-bottom: var(--space-md);
+      }
+
+      .legend-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-md);
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-sm);
+      }
+
+      .legend-icon {
+        font-size: var(--text-xl);
+        flex-shrink: 0;
+      }
+
+      .legend-text {
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
+        line-height: 1.5;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        color: var(--color-primary);
+        text-decoration: none;
+        margin-bottom: var(--space-lg);
+        transition: all var(--transition-base);
+      }
+
+      .back-link:hover {
+        transform: translateX(-4px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <nav class="nav-container" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+          <a href="/" aria-label="Home">DB</a>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="/">Home</a></li>
+          <li><a href="/html/ai_services.html" class="active">AI Services</a></li>
+          <li><a href="/html/data_platform.html">Data Platform</a></li>
+          <li><a href="/html/leadership.html">Management Style</a></li>
+          <li><a href="/html/contact.html">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <span class="theme-icon"></span>
+          </button>
+          <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle menu">
+            <span class="hamburger"></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <section class="diagram-container">
+        <div class="container">
+          <a href="/html/ai_services.html" class="back-link">
+            <span>←</span>
+            <span>Back to AI Services</span>
+          </a>
+
+          <div class="diagram-header">
+            <h1 class="diagram-title">Skill Builder Recommendation Engine</h1>
+            <p class="diagram-subtitle">
+              System Architecture: Personalized Learning Path Recommendations
+            </p>
+          </div>
+
+          <div class="mermaid-wrapper">
+            <pre class="mermaid">
+graph TB
+  subgraph "User Data Sources"
+    A1[User Personal Interest]
+    A2[User Transcript Data]
+    A3[Learning History]
+  end
+
+  subgraph "Data Processing Layer"
+    B1[Data Aggregation Service]
+    B2[Feature Engineering]
+    B3[User Profile Builder]
+  end
+
+  subgraph "ML Models & Algorithms"
+    C1[Association Rule Mining]
+    C2[Amazon Personalize]
+    C3[Collaborative Filtering]
+    C4[Content-Based Filtering]
+  end
+
+  subgraph "Recommendation Engine"
+    D1[Model Ensemble]
+    D2[Ranking Algorithm]
+    D3[Diversity Filter]
+  end
+
+  subgraph "Output"
+    E1[Personalized Training Recommendations]
+    E2[Learning Path Suggestions]
+    E3[Skill Gap Analysis]
+  end
+
+  A1 --&gt; B1
+  A2 --&gt; B1
+  A3 --&gt; B1
+
+  B1 --&gt; B2
+  B2 --&gt; B3
+
+  B3 --&gt; C1
+  B3 --&gt; C2
+  B3 --&gt; C3
+  B3 --&gt; C4
+
+  C1 --&gt; D1
+  C2 --&gt; D1
+  C3 --&gt; D1
+  C4 --&gt; D1
+
+  D1 --&gt; D2
+  D2 --&gt; D3
+
+  D3 --&gt; E1
+  D3 --&gt; E2
+  D3 --&gt; E3
+
+  style A1 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
+  style A2 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
+  style A3 fill:#FF9900,stroke:#FF9900,stroke-width:2px,color:#fff
+  style C1 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
+  style C2 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
+  style C3 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
+  style C4 fill:#527FFF,stroke:#527FFF,stroke-width:2px,color:#fff
+  style E1 fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
+  style E2 fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
+  style E3 fill:#22c55e,stroke:#22c55e,stroke-width:2px,color:#fff
+            </pre>
+          </div>
+
+          <div class="diagram-legend">
+            <h3 class="legend-title">System Components</h3>
+            <div class="legend-items">
+              <div class="legend-item">
+                <span class="legend-icon">📊</span>
+                <div>
+                  <strong>User Data Sources:</strong>
+                  <p class="legend-text">
+                    Collects user interests, course transcripts, and learning history to build
+                    comprehensive learner profiles.
+                  </p>
+                </div>
+              </div>
+              <div class="legend-item">
+                <span class="legend-icon">⚙️</span>
+                <div>
+                  <strong>Data Processing:</strong>
+                  <p class="legend-text">
+                    Aggregates and transforms raw data into features for ML model consumption.
+                  </p>
+                </div>
+              </div>
+              <div class="legend-item">
+                <span class="legend-icon">🤖</span>
+                <div>
+                  <strong>ML Models:</strong>
+                  <p class="legend-text">
+                    Association Rule Mining discovers course relationships, while Amazon Personalize
+                    and filtering algorithms predict user preferences.
+                  </p>
+                </div>
+              </div>
+              <div class="legend-item">
+                <span class="legend-icon">🎯</span>
+                <div>
+                  <strong>Recommendation Engine:</strong>
+                  <p class="legend-text">
+                    Combines model outputs, ranks recommendations, and ensures diversity in
+                    suggestions.
+                  </p>
+                </div>
+              </div>
+              <div class="legend-item">
+                <span class="legend-icon">✨</span>
+                <div>
+                  <strong>Outputs:</strong>
+                  <p class="legend-text">
+                    Delivers personalized training recommendations, learning paths, and skill gap
+                    analysis to users.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>&copy; 2025 Dharam Bhushan. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/main.js" defer></script>
+    <script src="/js/theme-toggle.js" defer></script>
+    <script>
+      // Initialize Mermaid with dark theme support
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'basis',
+        },
+        themeVariables: {
+          primaryColor: '#FF9900',
+          primaryTextColor: '#fff',
+          primaryBorderColor: '#FF9900',
+          lineColor: '#666',
+          secondaryColor: '#527FFF',
+          tertiaryColor: '#22c55e',
+        },
+      });
+
+      // Listen for theme changes
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (mutation.attributeName === 'data-theme') {
+            const newTheme =
+              document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+            mermaid.initialize({
+              theme: newTheme,
+            });
+            location.reload(); // Reload to apply new theme
+          }
+        });
+      });
+
+      observer.observe(document.documentElement, {
+        attributes: true,
+      });
+    </script>
+  </body>
+</html>
