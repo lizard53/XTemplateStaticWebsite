@@ -28,6 +28,12 @@ class ImageModal {
       'vector-search': {
         architecture: '/assets/images/vector__index_search.png',
       },
+      'knowledge-graph': {
+        architecture: '/assets/images/knowledge__graph.png',
+      },
+      'ai-content-evaluation': {
+        architecture: '/assets/images/ai_content_evaluation__architecture.png',
+      },
     };
 
     if (this.modal) {

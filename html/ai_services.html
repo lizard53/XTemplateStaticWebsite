@@ -16,18 +16,74 @@
       name="keywords"
       content="AI Services, ML Services, AWS, Machine Learning, AI Platforms, Engineering Manager"
     />
+    <meta name="author" content="Dharam Bhushan" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dharambhushan.com/html/ai_services.html" />
+    <meta
+      property="og:title"
+      content="AI/ML Services Portfolio | Dharam Bhushan - Engineering Manager"
+    />
+    <meta
+      property="og:description"
+      content="8 major AI/ML services delivered at AWS scale. Deep expertise in machine learning, AI platforms, and scalable ML infrastructure."
+    />
+    <meta property="og:image" content="https://dharambhushan.com/assets/images/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://dharambhushan.com/html/ai_services.html" />
+    <meta
+      property="twitter:title"
+      content="AI/ML Services Portfolio | Dharam Bhushan - Engineering Manager"
+    />
+    <meta
+      property="twitter:description"
+      content="8 major AI/ML services delivered at AWS scale. Deep expertise in machine learning, AI platforms, and scalable ML infrastructure."
+    />
+    <meta property="twitter:image" content="https://dharambhushan.com/assets/images/og-image.jpg" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://dharambhushan.com/html/ai_services.html" />
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/css/main.css" as="style" />
+    <link rel="preload" href="/css/themes.css" as="style" />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/components.css" />
     <link rel="stylesheet" href="/css/themes.css" />
     <link rel="stylesheet" href="/css/animations.css" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "AI/ML Services Portfolio",
+        "description": "8 major AI/ML services delivered at AWS scale",
+        "author": {
+          "@type": "Person",
+          "name": "Dharam Bhushan",
+          "jobTitle": "Engineering Manager",
+          "worksFor": {
+            "@type": "Organization",
+            "name": "Amazon Web Services"
+          }
+        }
+      }
+    </script>
   </head>
   <body>
+    <!-- Neural Network Background Container -->
+    <div id="ai-services-background" class="neural-network-background"></div>
+
     <!-- Skip to main content for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
@@ -76,11 +132,10 @@
               <div class="project-header">
                 <div class="project-icon">🎯</div>
               </div>
-              <h3 class="card-title">Skill Builder Recommendation Engine</h3>
+              <h3 class="card-title">Digital Recommendations</h3>
               <p class="card-description">
-                AI-powered recommendation system that personalizes learning paths for AWS training.
-                Built using collaborative filtering and content-based algorithms to match learners
-                with relevant courses.
+                AI-powered recommendation system that matches learners with relevant AWS training
+                courses . Built using collaborative filtering and content-based algorithms.
               </p>
               <div class="project-impact">
                 <p class="project-impact-title">Impact</p>
@@ -149,49 +204,84 @@
             </div>
 
             <!-- Service Card 3 -->
-            <div class="card project-card reveal stagger-2">
+            <div class="card project-card reveal stagger-2" data-modal="knowledge-graph">
               <div class="project-header">
                 <div class="project-icon">🧠</div>
               </div>
-              <h3 class="card-title">AI/ML Service 3</h3>
+              <h3 class="card-title">Knowledge Graph</h3>
               <p class="card-description">
-                Natural language processing service for text analysis, sentiment detection, and
-                entity extraction at scale.
+                Intelligent content modularization system that transforms AWS documentation and
+                digital content into reusable learning units with mapped relationships and
+                dependencies. Leverages Graph database to maintain knowledge graph , while storing
+                learning objectives as vector embeddings in OpenSearch for semantic and lexical
+                search. Leverages MCP (Model Context Protocol) to enable AI agents to dynamically
+                generate and package personalized learning paths on-demand based on specific
+                learning goals.
               </p>
               <div class="project-impact">
                 <p class="project-impact-title">Impact</p>
                 <div class="project-metrics">
                   <div class="metric">
-                    <span class="metric-value">500M+</span>
-                    <span class="metric-label">Texts Processed</span>
+                    <span class="metric-value">50K+</span>
+                    <span class="metric-label">Modular Learning Units</span>
                   </div>
                   <div class="metric">
-                    <span class="metric-value">95%</span>
-                    <span class="metric-label">Accuracy</span>
+                    <span class="metric-value">500K+</span>
+                    <span class="metric-label">Knowledge Relationships</span>
                   </div>
                 </div>
               </div>
               <div class="tags">
-                <span class="tag">NLP</span>
+                <span class="tag">Knowledge Graph</span>
+                <span class="tag">Neptune</span>
+                <span class="tag">Open Search</span>
+                <span class="tag">MCP</span>
+                <span class="tag">Amazon Strands</span>
                 <span class="tag">Bedrock</span>
-                <span class="tag">Lambda</span>
+              </div>
+              <div class="project-links">
+                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
+                  View High Level Flow Diagram →
+                </button>
               </div>
             </div>
 
-            <!-- Add 5 more service cards as needed -->
-            <div class="card project-card reveal stagger-3">
+            <!-- Service Card 4 -->
+            <div class="card project-card reveal stagger-3" data-modal="ai-content-evaluation">
               <div class="project-header">
-                <div class="project-icon">📈</div>
+                <div class="project-icon">⚖️</div>
               </div>
-              <h3 class="card-title">AI/ML Service 4</h3>
+              <h3 class="card-title">Evaluation Service for AI-Generated Content</h3>
               <p class="card-description">
-                Computer vision service for image and video analysis with real-time object detection
-                and classification capabilities.
+                Automated quality assurance system that validates AI-generated AWS training content
+                against official AWS documentation. Uses LLM-as-a-judge architecture to evaluate
+                correctness, accuracy, and alignment with authoritative sources. Accelerates
+                development of reliable AI-generated content while maintaining high quality
+                standards for the AWS Training Business.
               </p>
+              <div class="project-impact">
+                <p class="project-impact-title">Impact</p>
+                <div class="project-metrics">
+                  <div class="metric">
+                    <span class="metric-value">10x</span>
+                    <span class="metric-label">Faster Content Validation</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-value">95%+</span>
+                    <span class="metric-label">Accuracy Rate</span>
+                  </div>
+                </div>
+              </div>
               <div class="tags">
-                <span class="tag">Computer Vision</span>
-                <span class="tag">Rekognition</span>
-                <span class="tag">S3</span>
+                <span class="tag">LLM as Judge</span>
+                <span class="tag">Content Validation</span>
+                <span class="tag">Quality Assurance</span>
+                <span class="tag">Bedrock</span>
+              </div>
+              <div class="project-links">
+                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
+                  View High Level Flow Diagram →
+                </button>
               </div>
             </div>
 
@@ -311,6 +401,7 @@
     <script src="/js/theme-toggle.js" defer></script>
     <script src="/js/animations.js" defer></script>
     <script src="/js/modal.js" defer></script>
+    <script src="/js/neural-network.js" defer></script>
     <script src="/js/analytics.js" defer></script>
   </body>
 </html>

@@ -13,18 +13,69 @@
       content="Get in touch with Dharam Bhushan. Available for consulting, speaking engagements, and professional opportunities."
     />
     <meta name="keywords" content="Contact, Email, Message, Engineering Manager, AWS Seattle" />
+    <meta name="author" content="Dharam Bhushan" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dharambhushan.com/html/contact.html" />
+    <meta property="og:title" content="Contact | Dharam Bhushan - Engineering Manager" />
+    <meta
+      property="og:description"
+      content="Get in touch with Dharam Bhushan. Available for consulting, speaking engagements, and professional opportunities."
+    />
+    <meta property="og:image" content="https://dharambhushan.com/assets/images/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://dharambhushan.com/html/contact.html" />
+    <meta property="twitter:title" content="Contact | Dharam Bhushan - Engineering Manager" />
+    <meta
+      property="twitter:description"
+      content="Get in touch with Dharam Bhushan. Available for consulting, speaking engagements, and professional opportunities."
+    />
+    <meta property="twitter:image" content="https://dharambhushan.com/assets/images/og-image.jpg" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://dharambhushan.com/html/contact.html" />
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/css/main.css" as="style" />
+    <link rel="preload" href="/css/themes.css" as="style" />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/components.css" />
     <link rel="stylesheet" href="/css/themes.css" />
     <link rel="stylesheet" href="/css/animations.css" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": "Contact Dharam Bhushan",
+        "description": "Get in touch for consulting, speaking engagements, and professional opportunities",
+        "author": {
+          "@type": "Person",
+          "name": "Dharam Bhushan",
+          "jobTitle": "Engineering Manager",
+          "worksFor": {
+            "@type": "Organization",
+            "name": "Amazon Web Services"
+          },
+          "email": "work@dharambhushan.com"
+        }
+      }
+    </script>
   </head>
   <body>
+    <!-- Neural Network Background Container -->
+    <div id="contact-background" class="neural-network-background"></div>
+
     <!-- Skip to main content for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
@@ -208,6 +259,7 @@
     <script src="/js/main.js" defer></script>
     <script src="/js/theme-toggle.js" defer></script>
     <script src="/js/animations.js" defer></script>
+    <script src="/js/neural-network.js" defer></script>
     <script src="/js/contact-form.js" defer></script>
     <script src="/js/analytics.js" defer></script>
   </body>

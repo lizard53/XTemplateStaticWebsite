@@ -31,14 +31,27 @@ class NeuralNetworkBackground {
   }
 
   resize() {
-    this.canvas.width = this.container.offsetWidth;
-    this.canvas.height = this.container.offsetHeight;
-    this.canvas.style.position = 'absolute';
+    // For full-page backgrounds, use window dimensions
+    const isFullPage = this.container.classList.contains('neural-network-background');
+
+    if (isFullPage) {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight
+      );
+    } else {
+      this.canvas.width = this.container.offsetWidth;
+      this.canvas.height = this.container.offsetHeight;
+    }
+
+    this.canvas.style.position = isFullPage ? 'fixed' : 'absolute';
     this.canvas.style.top = '0';
     this.canvas.style.left = '0';
     this.canvas.style.width = '100%';
-    this.canvas.style.height = '100%';
+    this.canvas.style.height = isFullPage ? '100vh' : '100%';
     this.canvas.style.pointerEvents = 'none';
+    this.canvas.style.zIndex = '-1';
   }
 
   createNodes() {
@@ -60,11 +73,21 @@ class NeuralNetworkBackground {
       this.createNodes();
     });
 
-    this.container.addEventListener('mousemove', e => {
-      const rect = this.container.getBoundingClientRect();
-      this.mouseNode.x = e.clientX - rect.left;
-      this.mouseNode.y = e.clientY - rect.top;
-    });
+    const isFullPage = this.container.classList.contains('neural-network-background');
+
+    if (isFullPage) {
+      // For full-page backgrounds, track mouse relative to viewport
+      document.addEventListener('mousemove', e => {
+        this.mouseNode.x = e.clientX;
+        this.mouseNode.y = e.clientY + window.scrollY;
+      });
+    } else {
+      this.container.addEventListener('mousemove', e => {
+        const rect = this.container.getBoundingClientRect();
+        this.mouseNode.x = e.clientX - rect.left;
+        this.mouseNode.y = e.clientY - rect.top;
+      });
+    }
   }
 
   updateNodes() {
@@ -159,12 +182,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!prefersReducedMotion) {
-    const neuralBg = new NeuralNetworkBackground('home');
+    // Check for home page hero section
+    const homeSection = document.getElementById('home');
+    if (homeSection) {
+      const neuralBg = new NeuralNetworkBackground('home');
 
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      neuralBg.destroy();
-    });
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        neuralBg.destroy();
+      });
+    }
+
+    // Check for AI services full-page background
+    const aiServicesBackground = document.getElementById('ai-services-background');
+    if (aiServicesBackground) {
+      const neuralBg = new NeuralNetworkBackground('ai-services-background');
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        neuralBg.destroy();
+      });
+    }
+
+    // Check for Data Platform full-page background
+    const dataPlatformBackground = document.getElementById('data-platform-background');
+    if (dataPlatformBackground) {
+      const neuralBg = new NeuralNetworkBackground('data-platform-background');
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        neuralBg.destroy();
+      });
+    }
+
+    // Check for Leadership full-page background
+    const leadershipBackground = document.getElementById('leadership-background');
+    if (leadershipBackground) {
+      const neuralBg = new NeuralNetworkBackground('leadership-background');
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        neuralBg.destroy();
+      });
+    }
+
+    // Check for Contact full-page background
+    const contactBackground = document.getElementById('contact-background');
+    if (contactBackground) {
+      const neuralBg = new NeuralNetworkBackground('contact-background');
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        neuralBg.destroy();
+      });
+    }
   }
 });
 

@@ -183,7 +183,16 @@ npm run invalidate:cloudflare   # Clear CloudFlare CDN cache
    - Handles form submission states (loading, success, error)
    - Uses fetch API to submit form data to Web3Forms endpoint
 
-6. **analytics.js** - AnalyticsManager class
+6. **neural-network.js** - NeuralNetworkBackground class
+   - Canvas-based animated neural network visualization for AI-themed backgrounds
+   - Automatically initializes on pages with specific container IDs
+   - Supports both section-specific (like `#home`) and full-page backgrounds (`.neural-network-background`)
+   - 50 animated nodes with AWS-themed colors (orange/blue)
+   - Interactive: connections highlight on mouse hover
+   - Respects `prefers-reduced-motion` for accessibility
+   - Uses `requestAnimationFrame` for 60fps performance
+
+7. **analytics.js** - AnalyticsManager class
    - Privacy-focused event tracking (no PII)
    - Tracks page views, clicks, scroll depth, time on page
    - Core Web Vitals monitoring (LCP, FID, CLS)
@@ -326,6 +335,56 @@ Elements with class `.reveal` automatically animate on scroll via IntersectionOb
 - Animation threshold: 15% of element visible (configurable in `animations.js`)
 - CSS transition in `animations.css` handles visual effect
 
+### Neural Network Background System
+
+**Full-Page Background Implementation** (used on all main pages):
+
+The neural network animation provides an AI-inspired animated background across the entire page:
+
+**HTML Structure**:
+
+```html
+<body>
+  <!-- Add container at top of body -->
+  <div id="page-name-background" class="neural-network-background"></div>
+
+  <!-- Rest of page content -->
+</body>
+```
+
+**Active Background IDs**:
+
+- `#home` - Homepage hero section (contained)
+- `#ai-services-background` - Full-page background for AI Services page
+- `#data-platform-background` - Full-page background for Data Platform page
+- `#leadership-background` - Full-page background for Leadership page
+- `#contact-background` - Full-page background for Contact page
+
+**How It Works**:
+
+1. Container with specific ID is detected by `neural-network.js` on page load
+2. Canvas element is created and appended to the container
+3. For `.neural-network-background` class: Uses `position: fixed` to cover entire viewport during scroll
+4. For section-specific backgrounds (like `#home`): Uses `position: absolute` within container
+5. Animation runs at 60fps using `requestAnimationFrame`
+6. Mouse movements create interactive connection highlights
+7. Automatically respects `prefers-reduced-motion` accessibility setting
+
+**Adding Background to New Page**:
+
+1. Add `<div id="new-page-background" class="neural-network-background"></div>` at top of `<body>`
+2. Add initialization in `neural-network.js` DOMContentLoaded handler:
+   ```javascript
+   const newPageBackground = document.getElementById('new-page-background');
+   if (newPageBackground) {
+     const neuralBg = new NeuralNetworkBackground('new-page-background');
+     window.addEventListener('beforeunload', () => {
+       neuralBg.destroy();
+     });
+   }
+   ```
+3. Background will automatically cover full viewport and remain visible during scroll
+
 ### Contact Form Integration
 
 **Web3Forms Setup** (`html/contact.html`):
@@ -382,11 +441,22 @@ Elements with class `.reveal` automatically animate on scroll via IntersectionOb
 
 ### Adding a New Page
 
-1. Create HTML file in `/html/` directory (copy existing page structure)
-2. Update navigation links in all pages (header nav menu)
-3. Add page-specific styles to `components.css` or create dedicated CSS file
-4. Include standard scripts: `main.js`, `theme-toggle.js`, `animations.js`
-5. Update sitemap.xml (if exists)
+1. Create HTML file in `/html/` directory (copy existing page structure from `ai_services.html`)
+2. Update `<head>` section with appropriate SEO meta tags:
+   - Update `<title>` and meta description
+   - Add Open Graph tags (`og:title`, `og:description`, `og:url`, `og:image`)
+   - Add Twitter Card tags (`twitter:title`, `twitter:description`, etc.)
+   - Add canonical URL: `<link rel="canonical" href="https://dharambhushan.com/html/page-name.html" />`
+   - Add Schema.org structured data with appropriate `@type` (WebPage, ContactPage, etc.)
+   - Add resource preloading: `<link rel="preload" href="/css/main.css" as="style" />`
+3. Add neural network background container at top of `<body>`:
+   ```html
+   <div id="page-name-background" class="neural-network-background"></div>
+   ```
+4. Update navigation links in all pages (header nav menu)
+5. Include standard scripts in order: `main.js`, `theme-toggle.js`, `animations.js`, `neural-network.js`, `analytics.js`
+6. Add neural network initialization in `js/neural-network.js` for the new page background ID
+7. Update sitemap.xml (if exists)
 
 ### Adding a New AI/ML Service Card
 
