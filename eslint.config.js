@@ -21,6 +21,7 @@ export default [
         requestAnimationFrame: 'readonly',
         cancelAnimationFrame: 'readonly',
         URL: 'readonly',
+        URLSearchParams: 'readonly',
         PerformanceObserver: 'readonly',
         performance: 'readonly',
         CustomEvent: 'readonly',

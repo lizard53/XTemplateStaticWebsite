@@ -22,48 +22,16 @@ class ContactForm {
   }
 
   init() {
-    this.form.addEventListener('submit', e => this.handleSubmit(e));
+    // Check if page was redirected with success parameter
+    this.checkSuccessRedirect();
   }
 
-  async handleSubmit(event) {
-    event.preventDefault();
-
-    // Get form data
-    const formData = new FormData(this.form);
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      subject: formData.get('subject'),
-      message: formData.get('message'),
-    };
-
-    // Validate form
-    if (!this.validateForm(data)) {
-      return;
-    }
-
-    // Disable submit button
-    const submitButton = this.form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.textContent;
-    submitButton.disabled = true;
-    submitButton.textContent = 'Sending...';
-
-    try {
-      // For now, show success message (no backend integration)
-      // In production, replace this with actual API call
-      await this.simulateFormSubmission(data);
-
+  checkSuccessRedirect() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
       this.showStatus('success', "Message sent successfully! I'll get back to you soon.");
-      this.form.reset();
-    } catch (error) {
-      this.showStatus(
-        'error',
-        'Failed to send message. Please try emailing directly at work@dharambhushan.com'
-      );
-    } finally {
-      // Re-enable submit button
-      submitButton.disabled = false;
-      submitButton.textContent = originalButtonText;
+      // Remove the success parameter from URL without page reload
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }
 
@@ -95,22 +63,6 @@ class ContactForm {
     }, 5000);
   }
 
-  // Simulate form submission (replace with actual API call)
-  simulateFormSubmission(data) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Log form data for debugging
-        console.log('Form submitted:', data);
-
-        // Simulate success (95% success rate for demo)
-        if (Math.random() > 0.05) {
-          resolve();
-        } else {
-          reject(new Error('Simulated network error'));
-        }
-      }, 1000);
-    });
-  }
 }
 
 // ==========================================

@@ -80,7 +80,23 @@
 
             <div class="contact-form-wrapper">
               <h2 class="section-subtitle">Send a Message</h2>
-              <form id="contact-form" class="contact-form" action="#" method="POST">
+              <form
+                id="contact-form"
+                class="contact-form"
+                action="https://api.web3forms.com/submit"
+                method="POST"
+              >
+                <input
+                  type="hidden"
+                  name="access_key"
+                  value="2945d266-4a78-47c7-923c-1dcd56e4ba68"
+                />
+                <input
+                  type="hidden"
+                  name="redirect"
+                  value="http://localhost:3000/html/contact?success=true"
+                />
+
                 <div class="form-group">
                   <label for="name" class="form-label">Name *</label>
                   <input
