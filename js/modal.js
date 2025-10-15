@@ -25,6 +25,9 @@ class ImageModal {
         output: '/assets/images/recommendation_engine.png',
         architecture: '/assets/images/recommendation_engine__architecture.png',
       },
+      'vector-search': {
+        architecture: '/assets/images/vector__index_search.png',
+      },
     };
 
     if (this.modal) {
