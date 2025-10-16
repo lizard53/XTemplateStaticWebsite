@@ -123,178 +123,124 @@
         </div>
       </section>
 
-      <!-- AI/ML Services Section -->
+      <!-- Data Platform Section -->
       <section class="section section-services">
         <div class="container">
           <div class="projects-grid">
-            <!-- Service Card 1 -->
-            <div class="card project-card reveal">
+            <!-- Platform Card 1 -->
+            <div class="card project-card reveal" data-modal="data-ingestion-framework">
               <div class="project-header">
-                <div class="project-icon">🤖</div>
+                <div class="project-icon">🏗️</div>
               </div>
-              <h3 class="card-title">AI/ML Service 1</h3>
+              <h3 class="card-title">Standardized Data Ingestion Framework</h3>
               <p class="card-description">
-                Enterprise-scale machine learning platform enabling rapid model development and
-                deployment. Serving 1M+ predictions daily.
+                Enterprise-grade ingestion framework leveraging CDK constructs to unify data
+                acquisition across SQL, NoSQL, streaming, APIs, and file-based sources. Supports
+                multiple formats (CSV, JSON, XML, Parquet, Avro, HTML, PDF) for first-party and
+                third-party systems.
               </p>
               <div class="project-impact">
                 <p class="project-impact-title">Impact</p>
                 <div class="project-metrics">
                   <div class="metric">
-                    <span class="metric-value">1M+</span>
-                    <span class="metric-label">Daily Predictions</span>
+                    <span class="metric-value">20%</span>
+                    <span class="metric-label">Faster Development</span>
                   </div>
                   <div class="metric">
-                    <span class="metric-value">99.9%</span>
-                    <span class="metric-label">Uptime</span>
+                    <span class="metric-value">10+</span>
+                    <span class="metric-label">Source Types</span>
                   </div>
                 </div>
               </div>
               <div class="tags">
-                <span class="tag">ML Platform</span>
-                <span class="tag">SageMaker</span>
-                <span class="tag">Python</span>
+                <span class="tag">CDK</span>
+                <span class="tag">Data Ingestion</span>
+                <span class="tag">Multi-Format</span>
+                <span class="tag">IaC</span>
+              </div>
+              <div class="card-actions">
+                <button
+                  class="btn btn-secondary architecture-button"
+                  aria-label="View architecture"
+                >
+                  View Architecture
+                </button>
               </div>
             </div>
 
-            <!-- Service Card 2 -->
-            <div class="card project-card reveal stagger-1">
+            <!-- Platform Card 2 -->
+            <div
+              class="card project-card reveal stagger-1"
+              data-modal="data-warehouse-to-lake-migration"
+            >
               <div class="project-header">
-                <div class="project-icon">🧠</div>
+                <div class="project-icon">🏛️</div>
               </div>
-              <h3 class="card-title">AI/ML Service 2</h3>
+              <h3 class="card-title">Data Warehouse to Lake Migration</h3>
               <p class="card-description">
-                Deep learning inference service with auto-scaling capabilities and multi-region
-                deployment for low-latency predictions.
+                Architected and executed migration from traditional data warehouse to lake-based
+                architecture, decoupling compute from storage to enable true data-as-a-service.
+                Downstream systems now leverage compute engines of choice (Redshift Spectrum,
+                Athena, EMR, SageMaker) for analytics, reporting, and AI/ML workloads. Implemented
+                medallion architecture with clear separation of bronze, silver, and gold layers.
               </p>
               <div class="project-impact">
                 <p class="project-impact-title">Impact</p>
                 <div class="project-metrics">
                   <div class="metric">
-                    <span class="metric-value">&lt;50ms</span>
-                    <span class="metric-label">P99 Latency</span>
+                    <span class="metric-value">Zero</span>
+                    <span class="metric-label">Redshift Locks</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-value">4+</span>
+                    <span class="metric-label">Compute Client Engines</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tags">
+                <span class="tag">Data Lake</span>
+                <span class="tag">Medallion Architecture</span>
+                <span class="tag">Data as a Service</span>
+                <span class="tag">Apache Iceberg</span>
+                <span class="tag">Redshift Spectrum</span>
+              </div>
+              <div class="card-actions">
+                <button
+                  class="btn btn-secondary architecture-button"
+                  aria-label="View architecture"
+                >
+                  View Architecture
+                </button>
+              </div>
+            </div>
+
+            <!-- Platform Card 3 -->
+            <div class="card project-card reveal stagger-2">
+              <div class="project-header">
+                <div class="project-icon">📊</div>
+              </div>
+              <h3 class="card-title">Data Platform 3</h3>
+              <p class="card-description">
+                Unified analytics platform enabling self-service BI and advanced analytics with
+                integrated data governance and lineage tracking.
+              </p>
+              <div class="project-impact">
+                <p class="project-impact-title">Impact</p>
+                <div class="project-metrics">
+                  <div class="metric">
+                    <span class="metric-value">500+</span>
+                    <span class="metric-label">Data Sources</span>
                   </div>
                   <div class="metric">
                     <span class="metric-value">10K+</span>
-                    <span class="metric-label">RPS</span>
+                    <span class="metric-label">Users</span>
                   </div>
                 </div>
               </div>
               <div class="tags">
-                <span class="tag">Deep Learning</span>
-                <span class="tag">TensorFlow</span>
-                <span class="tag">PyTorch</span>
-              </div>
-            </div>
-
-            <!-- Service Card 3 -->
-            <div class="card project-card reveal stagger-2">
-              <div class="project-header">
-                <div class="project-icon">🔍</div>
-              </div>
-              <h3 class="card-title">AI/ML Service 3</h3>
-              <p class="card-description">
-                Natural language processing service for text analysis, sentiment detection, and
-                entity extraction at scale.
-              </p>
-              <div class="project-impact">
-                <p class="project-impact-title">Impact</p>
-                <div class="project-metrics">
-                  <div class="metric">
-                    <span class="metric-value">500M+</span>
-                    <span class="metric-label">Texts Processed</span>
-                  </div>
-                  <div class="metric">
-                    <span class="metric-value">95%</span>
-                    <span class="metric-label">Accuracy</span>
-                  </div>
-                </div>
-              </div>
-              <div class="tags">
-                <span class="tag">NLP</span>
-                <span class="tag">Bedrock</span>
-                <span class="tag">Lambda</span>
-              </div>
-            </div>
-
-            <!-- Add 5 more service cards as needed -->
-            <div class="card project-card reveal stagger-3">
-              <div class="project-header">
-                <div class="project-icon">📈</div>
-              </div>
-              <h3 class="card-title">AI/ML Service 4</h3>
-              <p class="card-description">
-                Computer vision service for image and video analysis with real-time object detection
-                and classification capabilities.
-              </p>
-              <div class="tags">
-                <span class="tag">Computer Vision</span>
-                <span class="tag">Rekognition</span>
-                <span class="tag">S3</span>
-              </div>
-            </div>
-
-            <div class="card project-card reveal">
-              <div class="project-header">
-                <div class="project-icon">🎯</div>
-              </div>
-              <h3 class="card-title">AI/ML Service 5</h3>
-              <p class="card-description">
-                Recommendation engine powering personalized experiences for millions of users with
-                real-time model updates.
-              </p>
-              <div class="tags">
-                <span class="tag">Recommendations</span>
-                <span class="tag">Personalize</span>
-                <span class="tag">DynamoDB</span>
-              </div>
-            </div>
-
-            <div class="card project-card reveal stagger-1">
-              <div class="project-header">
-                <div class="project-icon">🗣️</div>
-              </div>
-              <h3 class="card-title">AI/ML Service 6</h3>
-              <p class="card-description">
-                Speech-to-text and text-to-speech service with multi-language support and custom
-                voice training.
-              </p>
-              <div class="tags">
-                <span class="tag">Speech AI</span>
-                <span class="tag">Transcribe</span>
-                <span class="tag">Polly</span>
-              </div>
-            </div>
-
-            <div class="card project-card reveal stagger-2">
-              <div class="project-header">
-                <div class="project-icon">⚡</div>
-              </div>
-              <h3 class="card-title">AI/ML Service 7</h3>
-              <p class="card-description">
-                Real-time fraud detection system using ensemble ML models with adaptive learning
-                capabilities.
-              </p>
-              <div class="tags">
-                <span class="tag">Fraud Detection</span>
-                <span class="tag">Fraud Detector</span>
-                <span class="tag">Kinesis</span>
-              </div>
-            </div>
-
-            <div class="card project-card reveal stagger-3">
-              <div class="project-header">
-                <div class="project-icon">🔮</div>
-              </div>
-              <h3 class="card-title">AI/ML Service 8</h3>
-              <p class="card-description">
-                Time-series forecasting service for demand prediction and capacity planning with
-                automated retraining.
-              </p>
-              <div class="tags">
-                <span class="tag">Forecasting</span>
-                <span class="tag">Forecast</span>
-                <span class="tag">CloudWatch</span>
+                <span class="tag">Analytics</span>
+                <span class="tag">Redshift</span>
+                <span class="tag">QuickSight</span>
               </div>
             </div>
           </div>
@@ -329,10 +275,24 @@
       </div>
     </footer>
 
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <img
+          id="modal-image"
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          alt="Architecture diagram"
+        />
+      </div>
+    </div>
+
     <!-- Scripts -->
     <script src="/js/main.js" defer></script>
     <script src="/js/theme-toggle.js" defer></script>
     <script src="/js/animations.js" defer></script>
+    <script src="/js/modal.js" defer></script>
     <script src="/js/neural-network.js" defer></script>
     <script src="/js/analytics.js" defer></script>
   </body>

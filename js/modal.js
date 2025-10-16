@@ -40,6 +40,12 @@ class ImageModal {
       'data-sense': {
         architecture: '/assets/images/data_sense__architecture.png',
       },
+      'data-ingestion-framework': {
+        architecture: '/assets/images/data_ingestion_framework__architecture.png',
+      },
+      'data-warehouse-to-lake-migration': {
+        architecture: '/assets/images/data_warehouse_to_lake_migration__architecture.png',
+      },
     };
 
     if (this.modal) {
