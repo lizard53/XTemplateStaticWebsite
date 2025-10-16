@@ -34,6 +34,12 @@ class ImageModal {
       'ai-content-evaluation': {
         architecture: '/assets/images/ai_content_evaluation__architecture.png',
       },
+      'feedback-sentiment-analysis': {
+        architecture: '/assets/images/feedback_sentiment_analysis__architecture.png',
+      },
+      'data-sense': {
+        architecture: '/assets/images/data_sense__architecture.png',
+      },
     };
 
     if (this.modal) {

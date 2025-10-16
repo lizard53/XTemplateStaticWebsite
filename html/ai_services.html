@@ -127,46 +127,8 @@
       <section class="section section-services">
         <div class="container">
           <div class="projects-grid">
-            <!-- Service Card 1 -->
-            <div class="card project-card reveal" data-modal="recommendation-engine">
-              <div class="project-header">
-                <div class="project-icon">🎯</div>
-              </div>
-              <h3 class="card-title">Digital Recommendations</h3>
-              <p class="card-description">
-                AI-powered recommendation system that matches learners with relevant AWS training
-                courses . Built using collaborative filtering and content-based algorithms.
-              </p>
-              <div class="project-impact">
-                <p class="project-impact-title">Impact</p>
-                <div class="project-metrics">
-                  <div class="metric">
-                    <span class="metric-value">50K+</span>
-                    <span class="metric-label">Daily Recommendations</span>
-                  </div>
-                  <div class="metric">
-                    <span class="metric-value">12%</span>
-                    <span class="metric-label">Engagement Lift</span>
-                  </div>
-                </div>
-              </div>
-              <div class="tags">
-                <span class="tag">Recommendation System</span>
-                <span class="tag">Machine Learning</span>
-                <span class="tag">Personalization</span>
-              </div>
-              <div class="project-links">
-                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
-                  View High Level Flow Diagram →
-                </button>
-                <button class="diagram-link output-button" onclick="event.stopPropagation();">
-                  View Service Output →
-                </button>
-              </div>
-            </div>
-
-            <!-- Service Card 2 -->
-            <div class="card project-card reveal stagger-1" data-modal="vector-search">
+            <!-- Service Card 1: Intelligent Content Ingestion & Vector Search -->
+            <div class="card project-card reveal" data-modal="vector-search">
               <div class="project-header">
                 <div class="project-icon">🔍</div>
               </div>
@@ -203,51 +165,8 @@
               </div>
             </div>
 
-            <!-- Service Card 3 -->
-            <div class="card project-card reveal stagger-2" data-modal="knowledge-graph">
-              <div class="project-header">
-                <div class="project-icon">🧠</div>
-              </div>
-              <h3 class="card-title">Knowledge Graph</h3>
-              <p class="card-description">
-                Intelligent content modularization system that transforms AWS documentation and
-                digital content into reusable learning units with mapped relationships and
-                dependencies. Leverages Graph database to maintain knowledge graph , while storing
-                learning objectives as vector embeddings in OpenSearch for semantic and lexical
-                search. Leverages MCP (Model Context Protocol) to enable AI agents to dynamically
-                generate and package personalized learning paths on-demand based on specific
-                learning goals.
-              </p>
-              <div class="project-impact">
-                <p class="project-impact-title">Impact</p>
-                <div class="project-metrics">
-                  <div class="metric">
-                    <span class="metric-value">50K+</span>
-                    <span class="metric-label">Modular Learning Units</span>
-                  </div>
-                  <div class="metric">
-                    <span class="metric-value">500K+</span>
-                    <span class="metric-label">Knowledge Relationships</span>
-                  </div>
-                </div>
-              </div>
-              <div class="tags">
-                <span class="tag">Knowledge Graph</span>
-                <span class="tag">Neptune</span>
-                <span class="tag">Open Search</span>
-                <span class="tag">MCP</span>
-                <span class="tag">Amazon Strands</span>
-                <span class="tag">Bedrock</span>
-              </div>
-              <div class="project-links">
-                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
-                  View High Level Flow Diagram →
-                </button>
-              </div>
-            </div>
-
-            <!-- Service Card 4 -->
-            <div class="card project-card reveal stagger-3" data-modal="ai-content-evaluation">
+            <!-- Service Card 2: Evaluation Service for AI-Generated Content -->
+            <div class="card project-card reveal stagger-1" data-modal="ai-content-evaluation">
               <div class="project-header">
                 <div class="project-icon">⚖️</div>
               </div>
@@ -285,67 +204,169 @@
               </div>
             </div>
 
-            <div class="card project-card reveal">
+            <!-- Service Card 3: Knowledge Graph -->
+            <div class="card project-card reveal stagger-2" data-modal="knowledge-graph">
               <div class="project-header">
-                <div class="project-icon">✨</div>
+                <div class="project-icon">🧠</div>
               </div>
-              <h3 class="card-title">AI/ML Service 5</h3>
+              <h3 class="card-title">Knowledge Graph</h3>
               <p class="card-description">
-                Recommendation engine powering personalized experiences for millions of users with
-                real-time model updates.
+                Intelligent content modularization system that transforms AWS documentation and
+                digital content into reusable learning units with mapped relationships and
+                dependencies. Leverages Graph database to maintain knowledge graph , while storing
+                learning objectives and content modularization metadata as vector embeddings in
+                OpenSearch for semantic and lexical search. Leverages MCP (Model Context Protocol)
+                to enable AI agents to dynamically generate and package personalized learning paths
+                on-demand based on specific learning goals.
               </p>
+              <div class="project-impact">
+                <p class="project-impact-title">Impact</p>
+                <div class="project-metrics">
+                  <div class="metric">
+                    <span class="metric-value">50K+</span>
+                    <span class="metric-label">Modular Learning Units</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-value">500K+</span>
+                    <span class="metric-label">Knowledge Relationships</span>
+                  </div>
+                </div>
+              </div>
               <div class="tags">
-                <span class="tag">Recommendations</span>
-                <span class="tag">Personalize</span>
-                <span class="tag">DynamoDB</span>
+                <span class="tag">Knowledge Graph</span>
+                <span class="tag">Neptune</span>
+                <span class="tag">Open Search</span>
+                <span class="tag">MCP</span>
+                <span class="tag">Amazon Strands</span>
+                <span class="tag">Bedrock</span>
+              </div>
+              <div class="project-links">
+                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
+                  View High Level Flow Diagram →
+                </button>
               </div>
             </div>
 
-            <div class="card project-card reveal stagger-1">
+            <!-- Service Card 4: Data Sense -->
+            <div class="card project-card reveal stagger-3" data-modal="data-sense">
               <div class="project-header">
-                <div class="project-icon">🗣️</div>
+                <div class="project-icon">💡</div>
               </div>
-              <h3 class="card-title">AI/ML Service 6</h3>
+              <h3 class="card-title">Data Sense - Intelligent Data Lake Query Service</h3>
               <p class="card-description">
-                Speech-to-text and text-to-speech service with multi-language support and custom
-                voice training.
+                Agentic AI framework that transforms natural language queries into actionable data
+                insights. Leverages dual knowledge bases (OpenSearch for semantic/lexical search and
+                Neptune graph database for entity relationships) to understand data lake metadata
+                enriched through rigorous LLM evaluation. Query Generation Agent translates user
+                questions into SQL, while Query Execution Agent runs Athena queries and synthesizes
+                results into human-readable insights powered by generative AI.
               </p>
+              <div class="project-impact">
+                <p class="project-impact-title">Impact</p>
+                <div class="project-metrics">
+                  <div class="metric">
+                    <span class="metric-value">10x</span>
+                    <span class="metric-label">Faster Data Discovery</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-value">Zero</span>
+                    <span class="metric-label">SQL Knowledge Required</span>
+                  </div>
+                </div>
+              </div>
               <div class="tags">
-                <span class="tag">Speech AI</span>
-                <span class="tag">Transcribe</span>
-                <span class="tag">Polly</span>
+                <span class="tag">Agentic AI</span>
+                <span class="tag">Natural Language Query</span>
+                <span class="tag">OpenSearch</span>
+                <span class="tag">Neptune</span>
+                <span class="tag">Athena</span>
+                <span class="tag">Bedrock</span>
+              </div>
+              <div class="project-links">
+                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
+                  View High Level Flow Diagram →
+                </button>
               </div>
             </div>
 
-            <div class="card project-card reveal stagger-2">
+            <!-- Service Card 5: Digital Recommendations -->
+            <div class="card project-card reveal" data-modal="recommendation-engine">
               <div class="project-header">
-                <div class="project-icon">⚡</div>
+                <div class="project-icon">🎯</div>
               </div>
-              <h3 class="card-title">AI/ML Service 7</h3>
+              <h3 class="card-title">Digital Recommendations</h3>
               <p class="card-description">
-                Real-time fraud detection system using ensemble ML models with adaptive learning
-                capabilities.
+                AI-powered recommendation system that matches learners with relevant AWS training
+                courses . Built using collaborative filtering and content-based algorithms.
               </p>
+              <div class="project-impact">
+                <p class="project-impact-title">Impact</p>
+                <div class="project-metrics">
+                  <div class="metric">
+                    <span class="metric-value">50K+</span>
+                    <span class="metric-label">Daily Recommendations</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-value">12%</span>
+                    <span class="metric-label">Engagement Lift</span>
+                  </div>
+                </div>
+              </div>
               <div class="tags">
-                <span class="tag">Fraud Detection</span>
-                <span class="tag">Fraud Detector</span>
-                <span class="tag">Kinesis</span>
+                <span class="tag">Recommendation System</span>
+                <span class="tag">Machine Learning</span>
+                <span class="tag">Personalization</span>
+              </div>
+              <div class="project-links">
+                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
+                  View High Level Flow Diagram →
+                </button>
+                <button class="diagram-link output-button" onclick="event.stopPropagation();">
+                  View Service Output →
+                </button>
               </div>
             </div>
 
-            <div class="card project-card reveal stagger-3">
+            <!-- Service Card 6: Multilingual Feedback Analytics & Sentiment Intelligence -->
+            <div
+              class="card project-card reveal stagger-1"
+              data-modal="feedback-sentiment-analysis"
+            >
               <div class="project-header">
-                <div class="project-icon">🔮</div>
+                <div class="project-icon">📊</div>
               </div>
-              <h3 class="card-title">AI/ML Service 8</h3>
+              <h3 class="card-title">Multilingual Feedback Analytics & Sentiment Intelligence</h3>
               <p class="card-description">
-                Time-series forecasting service for demand prediction and capacity planning with
-                automated retraining.
+                Advanced NLP-powered feedback collection and sentiment analysis system that
+                processes customer feedback in multiple languages for AWS Training products and
+                services. Automatically generates actionable insights including Content Satisfaction
+                Score (CSAT) and Net Promoter Score (NPS), enabling data-driven decisions to improve
+                training quality and learner experience at scale.
               </p>
+              <div class="project-impact">
+                <p class="project-impact-title">Impact</p>
+                <div class="project-metrics">
+                  <div class="metric">
+                    <span class="metric-value">15+</span>
+                    <span class="metric-label">Languages Supported</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-value">100K+</span>
+                    <span class="metric-label">Monthly Feedback Analyzed</span>
+                  </div>
+                </div>
+              </div>
               <div class="tags">
-                <span class="tag">Forecasting</span>
-                <span class="tag">Forecast</span>
-                <span class="tag">CloudWatch</span>
+                <span class="tag">Sentiment Analysis</span>
+                <span class="tag">NLP</span>
+                <span class="tag">Multilingual</span>
+                <span class="tag">CSAT/NPS</span>
+                <span class="tag">Amazon Comprehend</span>
+              </div>
+              <div class="project-links">
+                <button class="diagram-link architecture-button" onclick="event.stopPropagation();">
+                  View High Level Flow Diagram →
+                </button>
               </div>
             </div>
           </div>
