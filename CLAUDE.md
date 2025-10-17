@@ -7,10 +7,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Professional portfolio website for Dharam Bhushan - AWS Engineering Manager specializing in AI/ML services and data platforms. Static site built with vanilla HTML/CSS/JavaScript, deployed using AWS CDK infrastructure as code, hosted on AWS S3 with CloudFlare CDN.
 
 **Technology Stack**: Vanilla JavaScript (ES2021), HTML5, CSS3 (no frameworks)
-**Infrastructure**: AWS CDK (TypeScript) for S3 bucket
-**Hosting**: AWS S3 (bucket: dharam-personal-website-257641256327) + CloudFlare CDN
-**AWS Account**: 257641256327 (region: us-west-2)
-**Deployment**: Bash scripts for automated deployment
+**Infrastructure**: AWS CDK (TypeScript) for CloudFront + WAF + S3
+**Hosting**: AWS S3 + CloudFront + WAF + CloudFlare CDN (multi-layer security)
+**AWS Account**: 257641256327 (primary region: us-west-2, ACM cert: us-east-1)
+**Deployment**: Bash scripts + CDK for automated infrastructure and content deployment
 **Performance Target**: < 1.5s initial load, Lighthouse score > 95
 
 ## Development Commands
@@ -112,8 +112,10 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 
 - `S3_BUCKET_NAME` (default: dharam-personal-website-257641256327)
 - `AWS_REGION` (default: us-west-2)
-- `CLOUDFLARE_ZONE_ID` (for cache invalidation)
-- `CLOUDFLARE_API_TOKEN` (for cache invalidation)
+- `CERTIFICATE_ARN` (ACM certificate ARN in us-east-1 for CloudFront custom domain)
+- `CLOUDFRONT_DISTRIBUTION_ID` (for CloudFront cache invalidation)
+- `CLOUDFLARE_ZONE_ID` (for CloudFlare cache invalidation)
+- `CLOUDFLARE_API_TOKEN` (for CloudFlare cache invalidation)
 
 **AWS Account**: 257641256327 (us-west-2)
 **AWS Credentials**: Run `source ~/aws-credentials-export.zsh` to export credentials via IAM Roles Anywhere
@@ -122,12 +124,35 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 
 ### High-Level Architecture Pattern
 
-**JAMstack (Static Site + CDN)**
+**Secure JAMstack with Multi-Layer CDN + WAF**
 
-- Client (browsers) → CloudFlare CDN (global edge caching) → AWS S3 (origin)
-- No server-side processing, all static assets
-- Performance through aggressive edge caching
-- Security through HTTPS + DDoS protection
+```
+User Request (https://dharambhushan.com)
+    ↓
+CloudFlare CDN (SSL/TLS Full Strict, Edge Caching, DDoS Protection)
+    ↓ HTTPS (validated ACM certificate)
+AWS CloudFront (Custom Domain, ACM Certificate, WAF IP Filtering)
+    ↓ HTTPS (OAC Signed Requests)
+AWS S3 Bucket (Private, CloudFront OAC only)
+    ↓
+Static Website Files
+```
+
+**Architecture Benefits**:
+
+- ✅ **End-to-End Encryption**: HTTPS from user → CloudFlare → CloudFront → S3
+- ✅ **Multi-Layer Security**: CloudFlare DDoS + AWS WAF IP filtering + S3 OAC
+- ✅ **Performance**: Dual CDN caching (CloudFlare edge + CloudFront regional)
+- ✅ **Access Control**: WAF allows only CloudFlare IPv4/IPv6 ranges, S3 allows only CloudFront OAC
+- ✅ **Certificate Management**: ACM certificate in us-east-1 with automatic renewal
+
+**Security Layers**:
+
+1. **CloudFlare**: Edge caching, DDoS protection, SSL/TLS termination
+2. **AWS WAF**: IP-based filtering, allows only CloudFlare IP ranges (IPv4 + IPv6)
+3. **CloudFront OAC**: Origin Access Control with signed requests to S3
+4. **S3 Bucket Policy**: Allows only CloudFront service principal with distribution ARN validation
+5. **Full (Strict) SSL**: CloudFlare validates CloudFront's ACM certificate
 
 ### File Organization
 
@@ -160,11 +185,11 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 │       ├── images/            # Service diagrams, screenshots, profile photo
 │       ├── icons/             # Favicons, technology logos
 │       └── resume/            # PDF resume downloads
-├── infrastructure/            # AWS CDK infrastructure
+├── infrastructure/            # AWS CDK infrastructure (CloudFront + WAF + S3)
 │   ├── bin/
-│   │   └── s3-stack.ts       # CDK app entry point
+│   │   └── s3-stack.ts       # CDK app entry point (stack configuration)
 │   ├── lib/
-│   │   └── website-bucket-stack.ts  # S3 bucket stack definition
+│   │   └── website-bucket-stack.ts  # CloudFront + WAF + S3 stack definition
 │   ├── cdk.json              # CDK configuration
 │   ├── package.json          # CDK dependencies
 │   ├── tsconfig.json         # TypeScript configuration
@@ -174,6 +199,8 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 │   ├── deploy.sh             # Deploy to S3 with cache headers
 │   └── invalidate-cache.sh   # Purge CloudFlare cache
 ├── docs/
+│   ├── DEPLOYMENT_GUIDE.md   # Complete deployment guide for CloudFront + WAF architecture
+│   ├── acm-certificate-setup.md  # ACM certificate creation in us-east-1 for CloudFront
 │   └── cloudflare-setup.md   # CloudFlare CDN configuration guide
 ├── dist/                      # Build output (git-ignored)
 │   ├── css/                  # Minified CSS
@@ -490,21 +517,122 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 
 ## Deployment Architecture
 
-**Origin**: AWS S3 bucket (`s3://dharam-personal-website-257641256327`) with static website hosting enabled
-**Region**: us-west-2
-**Account**: 257641256327
-**CDN**: CloudFlare (global edge caching, SSL/TLS, DDoS protection, auto minification)
-**DNS**: CloudFlare managed DNS
+### Infrastructure Components
+
+**AWS S3 Bucket**:
+
+- Name: `dharam-personal-website-257641256327`
+- Region: us-west-2
+- Configuration: Private, fully blocked public access
+- Access: CloudFront Origin Access Control (OAC) only
+
+**AWS CloudFront Distribution**:
+
+- Custom domain: `dharambhushan.com` and `www.dharambhushan.com`
+- Origin: S3 bucket via Origin Access Control (OAC)
+- SSL/TLS: ACM certificate in us-east-1
+- Cache policies: HTML (1 hour), Assets (1 year), Default (24 hours)
+- HTTP versions: HTTP/2 and HTTP/3 enabled
+- Compression: Gzip and Brotli enabled
+
+**AWS WAF Web ACL**:
+
+- Scope: CLOUDFRONT
+- Default action: Block all traffic
+- Allow rules: CloudFlare IPv4 and IPv6 ranges only
+- Attached to: CloudFront distribution
+
+**ACM Certificate**:
+
+- Region: us-east-1 (required for CloudFront)
+- Domain names: `dharambhushan.com`, `www.dharambhushan.com`
+- Validation: DNS validation via CloudFlare CNAME records
+- Renewal: Automatic by AWS
+
+**CloudFlare CDN**:
+
+- SSL/TLS mode: Full (strict) - validates CloudFront certificate
+- DNS: CNAME `dharambhushan.com` → CloudFront domain
+- Proxy status: Enabled (orange cloud)
+- Additional caching layer and DDoS protection
+
+**AWS Account**: 257641256327
+**Primary Region**: us-west-2 (S3, CDK stack)
+**Certificate Region**: us-east-1 (ACM certificate for CloudFront)
+
+### Initial Infrastructure Deployment
+
+**Prerequisites**:
+
+1. Create ACM certificate in us-east-1 (see `docs/acm-certificate-setup.md`)
+2. Add DNS validation records in CloudFlare
+3. Wait for certificate validation (10-20 minutes)
+4. Set environment variable: `export CERTIFICATE_ARN='arn:aws:acm:us-east-1:...'`
+
+**Deploy Infrastructure**:
+
+```bash
+# Export AWS credentials
+source ~/aws-credentials-export.zsh
+
+# Set environment variables
+export CDK_DEFAULT_ACCOUNT=257641256327
+export CDK_DEFAULT_REGION=us-west-2
+export CERTIFICATE_ARN='arn:aws:acm:us-east-1:257641256327:certificate/xxxxx'
+
+# Bootstrap CDK (first time only)
+npm run infra:bootstrap
+
+# Deploy CloudFront + WAF + S3 stack
+npm run infra:deploy
+```
+
+**Stack Outputs** (save these):
+
+- `BucketName`: S3 bucket name
+- `DistributionId`: CloudFront distribution ID (for cache invalidation)
+- `DistributionDomainName`: CloudFront domain (e.g., `d1234567890abc.cloudfront.net`)
+- `WebACLArn`: WAF Web ACL ARN
+
+### Configure CloudFlare DNS
+
+After infrastructure deployment:
+
+1. Log in to CloudFlare dashboard
+2. Navigate to DNS → Records
+3. Add/Update CNAME record:
+   - Name: `@`
+   - Target: CloudFront distribution domain (from stack output)
+   - Proxy status: **Proxied** (orange cloud - REQUIRED)
+4. Go to SSL/TLS → Overview
+5. Set encryption mode: **Full (strict)**
+
+See `docs/DEPLOYMENT_GUIDE.md` for detailed CloudFlare configuration.
+
+### Website Content Deployment
 
 **Deployment Flow**:
 
 1. Export AWS credentials: `source ~/aws-credentials-export.zsh`
 2. `npm run build` - Build and validate website (via ./scripts/build.sh)
 3. `npm run deploy:s3` - Upload to S3 with cache headers (via ./scripts/deploy.sh)
-4. `npm run deploy:cloudflare` - Clear CloudFlare cache (via ./scripts/invalidate-cache.sh)
+4. Invalidate caches:
+   - CloudFront: `aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"`
+   - CloudFlare: `npm run deploy:cloudflare` (via ./scripts/invalidate-cache.sh)
 5. Verify: Check production URL, run Lighthouse audit
 
-**Cache Headers**: 1-year cache for static assets (CSS/JS/images), 1-hour revalidation for HTML
+**Cache Headers**:
+
+- HTML files: 1 hour (`max-age=3600`)
+- CSS/JS files: 1 year (`max-age=31536000`)
+- Images: 1 year (`max-age=31536000`)
+- Resume PDF: 1 week (`max-age=604800`)
+
+**Cache Invalidation**:
+
+- CloudFront cache must be invalidated after S3 deployment
+- CloudFlare cache should be purged for immediate propagation
+- Both caches work together for optimal performance
 
 ### Pre-Production Deployment Checklist
 
@@ -611,12 +739,28 @@ npm run validate:all && npm run lighthouse
 - Accuracy: Precise viewport detection with configurable thresholds
 - Modern API with graceful fallback for old browsers
 
-### Why CloudFlare over AWS CloudFront?
+### Why CloudFlare + CloudFront (Dual CDN)?
 
-- Free tier sufficient for portfolio traffic
-- More edge locations globally
-- Better free SSL, automatic optimizations (Brotli, HTTP/3)
-- Simpler developer experience
+**CloudFront Benefits**:
+
+- Native S3 integration with Origin Access Control (OAC)
+- ACM certificate integration for custom domains
+- AWS WAF for advanced security rules
+- Regional edge caching optimized for AWS services
+
+**CloudFlare Benefits**:
+
+- Free tier with unlimited bandwidth
+- More global edge locations (300+)
+- DDoS protection included
+- Additional caching layer for improved performance
+
+**Combined Architecture**:
+
+- CloudFront provides secure S3 access and WAF filtering
+- CloudFlare adds global edge caching and DDoS protection
+- End-to-end HTTPS encryption throughout the chain
+- WAF restricts CloudFront to CloudFlare IPs only for security
 
 ## Troubleshooting
 
@@ -655,20 +799,174 @@ npm run validate:all && npm run lighthouse
 - Reinstall dependencies: `rm -rf node_modules && npm install`
 - Check Node.js version compatibility (modern Node.js recommended)
 
+### Infrastructure Deployment Issues
+
+**ACM Certificate Not Found**:
+
+- Verify certificate is in us-east-1 region (required for CloudFront)
+- Check `CERTIFICATE_ARN` environment variable is set correctly
+- Ensure certificate status is "Issued" in ACM console
+
+**CloudFront Distribution Creation Failed**:
+
+- Verify ACM certificate ARN is correct
+- Check that certificate includes both `dharambhushan.com` and `www.dharambhushan.com`
+- Ensure WAF Web ACL was created successfully (check CloudFormation events)
+
+**WAF Blocking Legitimate Traffic**:
+
+- Verify CloudFlare proxy (orange cloud) is enabled in DNS
+- Check CloudFlare IP ranges are up to date in `infrastructure/lib/website-bucket-stack.ts`
+- Update IP ranges: https://www.cloudflare.com/ips-v4 and https://www.cloudflare.com/ips-v6
+- Redeploy infrastructure after updating IP ranges: `npm run infra:deploy`
+
+**403 Forbidden from CloudFront**:
+
+- Check WAF logs in CloudWatch to see if request was blocked
+- Verify request is coming from CloudFlare IP (check X-Forwarded-For header)
+- Ensure CloudFlare proxy is enabled (orange cloud)
+
+**403 Forbidden from S3**:
+
+- Verify CloudFront Origin Access Control is configured correctly
+- Check S3 bucket policy allows CloudFront service principal
+- Ensure distribution ID in bucket policy condition matches deployed distribution
+
+**Website Not Loading After Deployment**:
+
+- Check CloudFlare DNS points to CloudFront domain (not S3 endpoint)
+- Verify SSL/TLS mode in CloudFlare is "Full (strict)"
+- Invalidate both CloudFront and CloudFlare caches
+- Check CloudFront distribution status is "Deployed" (not "In Progress")
+
+**CloudFront Cache Not Updating**:
+
+- Run CloudFront invalidation: `aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"`
+- Wait 5-10 minutes for invalidation to complete
+- Check invalidation status in CloudFront console
+- Also purge CloudFlare cache: `npm run deploy:cloudflare`
+
 ## Project Structure Notes
 
 **Source Files**: All website files are in `src/` directory (moved from root in Oct 2025 refactor)
-**Development Server**: `npm run dev` now serves from `src/` directory on http://localhost:3000
-**Infrastructure as Code**: AWS S3 bucket deployed via AWS CDK in TypeScript (`infrastructure/` directory)
-**S3 Bucket**: dharam-personal-website-257641256327 (AWS account 257641256327, region us-west-2)
+**Development Server**: `npm run dev` serves from `src/` directory on http://localhost:3000
+**Infrastructure as Code**: CloudFront + WAF + S3 deployed via AWS CDK in TypeScript (`infrastructure/` directory)
+**Infrastructure Stack**: `DharamBhushanWebsite-production` (CloudFormation stack)
+**S3 Bucket**: dharam-personal-website-257641256327 (private, OAC access only)
+**CloudFront Distribution**: Custom domain `dharambhushan.com` with ACM certificate
+**AWS WAF**: CloudFlare IP filtering (IPv4 + IPv6)
+**AWS Account**: 257641256327
+**Primary Region**: us-west-2 (S3, CloudFront, WAF, CDK stack)
+**Certificate Region**: us-east-1 (ACM certificate for CloudFront)
 **AWS Credentials**: Use `source ~/aws-credentials-export.zsh` to export via IAM Roles Anywhere
 **Deployment Scripts**: Bash scripts in `scripts/` for automated build, deploy, and cache invalidation
 **Build Output**: Minified assets go to `dist/` directory (git-ignored)
 
 ## Additional Documentation
 
-- **infrastructure/README.md**: AWS CDK infrastructure documentation, deployment guide, CloudFormation stack details
-- **docs/cloudflare-setup.md**: Comprehensive CloudFlare CDN setup guide with step-by-step instructions
+- **docs/DEPLOYMENT_GUIDE.md**: Complete deployment guide for CloudFront + WAF + CloudFlare architecture, step-by-step setup, security configuration, troubleshooting
+- **docs/acm-certificate-setup.md**: ACM certificate creation in us-east-1 for CloudFront, DNS validation, certificate renewal
+- **docs/cloudflare-setup.md**: CloudFlare CDN configuration guide, DNS setup, SSL/TLS configuration, caching rules
+- **infrastructure/README.md**: AWS CDK infrastructure documentation, CloudFront + WAF + S3 stack details, deployment commands
 - **ARCHITECTURE.md**: Comprehensive architectural documentation (1500+ lines) covering component architecture, deployment, performance strategy, code quality infrastructure
 - **README.md**: Setup instructions, deployment workflow, environment variables, troubleshooting
 - **package.json**: All npm scripts and dependencies listed with descriptions
+
+## Infrastructure Code Overview
+
+### infrastructure/lib/website-bucket-stack.ts
+
+This is the main CDK stack definition that creates all AWS infrastructure:
+
+**Key Components**:
+
+1. **S3 Bucket** (Private):
+   - Name: `dharam-personal-website-257641256327`
+   - Block all public access
+   - Versioning enabled for rollback
+   - S3-managed encryption
+   - Lifecycle rules for old versions (90 days)
+   - CORS configuration for web fonts
+
+2. **CloudFlare IP Sets** (for WAF):
+   - IPv4 IP Set: 15 CloudFlare IPv4 ranges
+   - IPv6 IP Set: 7 CloudFlare IPv6 ranges
+   - Source: https://www.cloudflare.com/ips-v4 and https://www.cloudflare.com/ips-v6
+
+3. **AWS WAF Web ACL**:
+   - Scope: CLOUDFRONT
+   - Default action: Block all traffic
+   - Rule 1 (Priority 1): Allow CloudFlare IPv4
+   - Rule 2 (Priority 2): Allow CloudFlare IPv6
+   - CloudWatch metrics enabled
+
+4. **CloudFront Distribution**:
+   - Custom domains: `dharambhushan.com`, `www.dharambhushan.com`
+   - Origin: S3 bucket via Origin Access Control (OAC)
+   - ACM certificate in us-east-1
+   - Default behavior: REDIRECT_TO_HTTPS, cache 24 hours
+   - Additional behavior for `*.html`: cache 1 hour
+   - Additional behavior for `/assets/*`: cache 365 days
+   - Error responses: 403/404 → 200 with `/index.html` (SPA routing)
+   - HTTP/2 and HTTP/3 enabled
+   - Gzip and Brotli compression
+   - WAF attached
+
+5. **S3 Bucket Policy**:
+   - Allow `s3:GetObject` from CloudFront service principal only
+   - Condition: Source ARN must match CloudFront distribution ARN
+   - No other access allowed
+
+**Stack Outputs**:
+
+- BucketName, BucketArn
+- DistributionId, DistributionDomainName
+- WebACLArn
+- WebsiteURL (if certificate provided)
+
+### infrastructure/bin/s3-stack.ts
+
+CDK app entry point that configures the stack:
+
+**Configuration Parameters**:
+
+- `bucketName`: From context or env (`dharam-personal-website-257641256327`)
+- `domainName`: From context or env (`dharambhushan.com`)
+- `certificateArn`: From context or env (ACM cert ARN in us-east-1)
+- `environment`: From context or env (`production`)
+- `awsAccount`: From env `CDK_DEFAULT_ACCOUNT` (257641256327)
+- `awsRegion`: From env `CDK_DEFAULT_REGION` (us-west-2)
+
+**Tags Applied**:
+
+- Project: DharamBhushanPortfolio
+- Environment: production
+- ManagedBy: AWS-CDK
+- Domain: dharambhushan.com
+
+### Updating CloudFlare IP Ranges
+
+When CloudFlare updates their IP ranges:
+
+1. Check latest ranges:
+   - IPv4: https://www.cloudflare.com/ips-v4
+   - IPv6: https://www.cloudflare.com/ips-v6
+
+2. Update `infrastructure/lib/website-bucket-stack.ts`:
+
+   ```typescript
+   const cloudflareIPv4Ranges = [
+     // Update with new ranges
+   ];
+   const cloudflareIPv6Ranges = [
+     // Update with new ranges
+   ];
+   ```
+
+3. Redeploy infrastructure:
+
+   ```bash
+   npm run infra:deploy
+   ```
+
+4. Verify WAF rules are updated in AWS Console
