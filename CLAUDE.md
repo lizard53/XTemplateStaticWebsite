@@ -9,9 +9,11 @@ Professional portfolio website for Dharam Bhushan - AWS Engineering Manager spec
 **Technology Stack**: Vanilla JavaScript (ES2021), HTML5, CSS3 (no frameworks)
 **Infrastructure**: AWS CDK (TypeScript) for CloudFront + WAF + S3
 **Hosting**: AWS S3 + CloudFront + WAF + CloudFlare CDN (multi-layer security)
-**AWS Account**: 257641256327 (primary region: us-west-2, ACM cert: us-east-1)
+**AWS Account**: 257641256327 (region: us-east-1, ACM cert: us-east-1)
 **Deployment**: Bash scripts + CDK for automated infrastructure and content deployment
 **Performance Target**: < 1.5s initial load, Lighthouse score > 95
+
+**IMPORTANT**: Infrastructure deployed in us-east-1 (not us-west-2) as of October 2025
 
 ## Development Commands
 
@@ -110,15 +112,16 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 
 **Environment Variables Required**:
 
-- `S3_BUCKET_NAME` (default: dharam-personal-website-257641256327)
-- `AWS_REGION` (default: us-west-2)
-- `CERTIFICATE_ARN` (ACM certificate ARN in us-east-1 for CloudFront custom domain)
-- `CLOUDFRONT_DISTRIBUTION_ID` (for CloudFront cache invalidation)
+- `S3_BUCKET_NAME` (default: dharam-personal-website-257641256327-us-east-1)
+- `AWS_REGION` (default: us-east-1)
+- `CERTIFICATE_ARN` (ACM certificate ARN: arn:aws:acm:us-east-1:257641256327:certificate/b30ce704-7d37-4200-9815-037c834bdf41)
+- `CLOUDFRONT_DISTRIBUTION_ID` (CloudFront distribution: E14SW9FUYL655V)
 - `CLOUDFLARE_ZONE_ID` (for CloudFlare cache invalidation)
 - `CLOUDFLARE_API_TOKEN` (for CloudFlare cache invalidation)
 
-**AWS Account**: 257641256327 (us-west-2)
+**AWS Account**: 257641256327 (us-east-1)
 **AWS Credentials**: Run `source ~/aws-credentials-export.zsh` to export credentials via IAM Roles Anywhere
+**CloudFront Domain**: d25p12sd2oijz4.cloudfront.net (use as CloudFlare CNAME target)
 
 ## Architecture & Code Structure
 
@@ -160,6 +163,7 @@ Static Website Files
 /
 ├── src/                        # Website source files
 │   ├── index.html             # Main landing page with hero section
+│   ├── error.html             # Custom 404 error page
 │   ├── html/                  # Additional pages
 │   │   ├── ai_services.html   # AI/ML services portfolio (8 services)
 │   │   ├── data_platform.html # Data platform projects (4 platforms)
@@ -484,7 +488,7 @@ The neural network animation provides an AI-inspired animated background across 
 
 1. User fills out and submits form
 2. Form submits naturally to Web3Forms (bypasses CORS)
-3. Web3Forms sends email and redirects to: `http://localhost:3000/html/contact?success=true` (or production URL)
+3. Web3Forms sends email and redirects to: `http://localhost:3000/html/contact.html?success=true` (or production URL)
 4. JavaScript in `contact-form.js` checks for `?success=true` parameter on page load
 5. If found, displays green success message and clears the URL parameter
 6. Message auto-hides after 5 seconds
@@ -496,17 +500,34 @@ The neural network animation provides an AI-inspired animated background across 
 
 **To Update Redirect URL for Production**:
 
-1. In `src/html/contact.html:148`, change redirect URL from `http://localhost:3000/html/contact?success=true` to `https://dharambhushan.com/html/contact?success=true`
+1. In `src/html/contact.html:148`, change redirect URL from `http://localhost:3000/html/contact.html?success=true` to `https://dharambhushan.com/html/contact.html?success=true`
 2. This ensures the success message appears correctly in production
+3. **IMPORTANT**: The `.html` extension is REQUIRED - without it, CloudFront will treat the path as non-existent and redirect to error.html
 
 **Environment-Specific Configuration**:
 
 **IMPORTANT**: The contact form redirect URL in `src/html/contact.html` (line 148) must match your environment:
 
-- **Development**: `http://localhost:3000/html/contact?success=true`
-- **Production**: `https://dharambhushan.com/html/contact?success=true`
+- **Development**: `http://localhost:3000/html/contact.html?success=true`
+- **Production**: `https://dharambhushan.com/html/contact.html?success=true`
 
-This URL is hardcoded in the HTML form's hidden `redirect` input field and must be manually updated before production deployment. This is a common source of issues if forgotten.
+This URL is hardcoded in the HTML form's hidden `redirect` input field and must be manually updated before production deployment. The `.html` extension is REQUIRED - without it, CloudFront will treat the redirect as a 404 and show the error page instead of the success message. This is a common source of issues if forgotten.
+
+### Error Page Configuration
+
+**Custom 404 Error Page** (`src/error.html`):
+
+- CloudFront error responses configured to serve `/error.html` for 403/404 errors
+- Returns proper 404 status code (good for SEO)
+- Same hero background styling as homepage
+- Apologetic message with navigation options
+- Error page cached for 5 minutes
+- Configured in `infrastructure/lib/website-bucket-stack.ts` errorResponses section
+
+**Testing Error Page**:
+
+- Visit any non-existent URL (e.g., https://dharambhushan.com/nonexistent)
+- Should display custom error page with same branding
 
 ### Performance Considerations
 
@@ -521,8 +542,8 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 
 **AWS S3 Bucket**:
 
-- Name: `dharam-personal-website-257641256327`
-- Region: us-west-2
+- Name: `dharam-personal-website-257641256327-us-east-1`
+- Region: us-east-1
 - Configuration: Private, fully blocked public access
 - Access: CloudFront Origin Access Control (OAC) only
 
@@ -557,8 +578,7 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 - Additional caching layer and DDoS protection
 
 **AWS Account**: 257641256327
-**Primary Region**: us-west-2 (S3, CDK stack)
-**Certificate Region**: us-east-1 (ACM certificate for CloudFront)
+**Region**: us-east-1 (S3, CloudFront, WAF, CDK stack, ACM certificate)
 
 ### Initial Infrastructure Deployment
 
@@ -577,8 +597,8 @@ source ~/aws-credentials-export.zsh
 
 # Set environment variables
 export CDK_DEFAULT_ACCOUNT=257641256327
-export CDK_DEFAULT_REGION=us-west-2
-export CERTIFICATE_ARN='arn:aws:acm:us-east-1:257641256327:certificate/xxxxx'
+export CDK_DEFAULT_REGION=us-east-1
+export CERTIFICATE_ARN='arn:aws:acm:us-east-1:257641256327:certificate/b30ce704-7d37-4200-9815-037c834bdf41'
 
 # Bootstrap CDK (first time only)
 npm run infra:bootstrap
@@ -587,12 +607,12 @@ npm run infra:bootstrap
 npm run infra:deploy
 ```
 
-**Stack Outputs** (save these):
+**Stack Outputs** (current deployment):
 
-- `BucketName`: S3 bucket name
-- `DistributionId`: CloudFront distribution ID (for cache invalidation)
-- `DistributionDomainName`: CloudFront domain (e.g., `d1234567890abc.cloudfront.net`)
-- `WebACLArn`: WAF Web ACL ARN
+- `BucketName`: dharam-personal-website-257641256327-us-east-1
+- `DistributionId`: E14SW9FUYL655V (for cache invalidation)
+- `DistributionDomainName`: d25p12sd2oijz4.cloudfront.net (use as CloudFlare CNAME target)
+- `WebACLArn`: WAF Web ACL ARN (CloudFlare IP filtering)
 
 ### Configure CloudFlare DNS
 
@@ -602,10 +622,10 @@ After infrastructure deployment:
 2. Navigate to DNS → Records
 3. Add/Update CNAME record:
    - Name: `@`
-   - Target: CloudFront distribution domain (from stack output)
+   - Target: `d25p12sd2oijz4.cloudfront.net` (CloudFront distribution domain)
    - Proxy status: **Proxied** (orange cloud - REQUIRED)
 4. Go to SSL/TLS → Overview
-5. Set encryption mode: **Full (strict)**
+5. Set encryption mode: **Full (strict)** (validates CloudFront ACM certificate)
 
 See `docs/DEPLOYMENT_GUIDE.md` for detailed CloudFlare configuration.
 
@@ -852,12 +872,12 @@ npm run validate:all && npm run lighthouse
 **Development Server**: `npm run dev` serves from `src/` directory on http://localhost:3000
 **Infrastructure as Code**: CloudFront + WAF + S3 deployed via AWS CDK in TypeScript (`infrastructure/` directory)
 **Infrastructure Stack**: `DharamBhushanWebsite-production` (CloudFormation stack)
-**S3 Bucket**: dharam-personal-website-257641256327 (private, OAC access only)
-**CloudFront Distribution**: Custom domain `dharambhushan.com` with ACM certificate
-**AWS WAF**: CloudFlare IP filtering (IPv4 + IPv6)
+**S3 Bucket**: dharam-personal-website-257641256327-us-east-1 (private, OAC access only)
+**CloudFront Distribution**: E14SW9FUYL655V (custom domain `dharambhushan.com` with ACM certificate)
+**CloudFront Domain**: d25p12sd2oijz4.cloudfront.net (use as CloudFlare CNAME target)
+**AWS WAF**: CloudFlare IP filtering (IPv4 + IPv6 ranges)
 **AWS Account**: 257641256327
-**Primary Region**: us-west-2 (S3, CloudFront, WAF, CDK stack)
-**Certificate Region**: us-east-1 (ACM certificate for CloudFront)
+**Region**: us-east-1 (all resources including S3, CloudFront, WAF, CDK stack, ACM certificate)
 **AWS Credentials**: Use `source ~/aws-credentials-export.zsh` to export via IAM Roles Anywhere
 **Deployment Scripts**: Bash scripts in `scripts/` for automated build, deploy, and cache invalidation
 **Build Output**: Minified assets go to `dist/` directory (git-ignored)
@@ -881,7 +901,8 @@ This is the main CDK stack definition that creates all AWS infrastructure:
 **Key Components**:
 
 1. **S3 Bucket** (Private):
-   - Name: `dharam-personal-website-257641256327`
+   - Name: `dharam-personal-website-257641256327-us-east-1`
+   - Region: us-east-1
    - Block all public access
    - Versioning enabled for rollback
    - S3-managed encryption
@@ -901,13 +922,15 @@ This is the main CDK stack definition that creates all AWS infrastructure:
    - CloudWatch metrics enabled
 
 4. **CloudFront Distribution**:
+   - Distribution ID: E14SW9FUYL655V
+   - Domain: d25p12sd2oijz4.cloudfront.net
    - Custom domains: `dharambhushan.com`, `www.dharambhushan.com`
    - Origin: S3 bucket via Origin Access Control (OAC)
-   - ACM certificate in us-east-1
+   - ACM certificate in us-east-1 (b30ce704-7d37-4200-9815-037c834bdf41)
    - Default behavior: REDIRECT_TO_HTTPS, cache 24 hours
    - Additional behavior for `*.html`: cache 1 hour
    - Additional behavior for `/assets/*`: cache 365 days
-   - Error responses: 403/404 → 200 with `/index.html` (SPA routing)
+   - Error responses: 403/404 → 404 with `/error.html` (custom error page)
    - HTTP/2 and HTTP/3 enabled
    - Gzip and Brotli compression
    - WAF attached
@@ -930,12 +953,13 @@ CDK app entry point that configures the stack:
 
 **Configuration Parameters**:
 
-- `bucketName`: From context or env (`dharam-personal-website-257641256327`)
+- `bucketName`: From context or env (`dharam-personal-website-257641256327-us-east-1`)
 - `domainName`: From context or env (`dharambhushan.com`)
 - `certificateArn`: From context or env (ACM cert ARN in us-east-1)
 - `environment`: From context or env (`production`)
 - `awsAccount`: From env `CDK_DEFAULT_ACCOUNT` (257641256327)
-- `awsRegion`: From env `CDK_DEFAULT_REGION` (us-west-2)
+- `awsRegion`: From env `CDK_DEFAULT_REGION` (us-east-1)
+- **Note**: Bucket name includes region suffix for uniqueness
 
 **Tags Applied**:
 
