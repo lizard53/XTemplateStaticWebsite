@@ -12,8 +12,8 @@
 # Usage: ./scripts/deploy.sh [bucket-name]
 #
 # Environment variables:
-#   S3_BUCKET_NAME - S3 bucket name (default: dharam-personal-website-257641256327)
-#   AWS_REGION     - AWS region (default: us-west-2)
+#   S3_BUCKET_NAME - S3 bucket name (default: dharam-personal-website-257641256327-us-east-1)
+#   AWS_REGION     - AWS region (default: us-east-1)
 ###############################################################################
 
 set -e  # Exit on error
@@ -27,8 +27,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-BUCKET_NAME="${1:-${S3_BUCKET_NAME:-dharam-personal-website-257641256327}}"
-AWS_REGION="${AWS_REGION:-us-west-2}"
+BUCKET_NAME="${1:-${S3_BUCKET_NAME:-dharam-personal-website-257641256327-us-east-1}}"
+AWS_REGION="${AWS_REGION:-us-east-1}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 SRC_DIR="$PROJECT_ROOT/src"

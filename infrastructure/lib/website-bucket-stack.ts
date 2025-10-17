@@ -246,15 +246,15 @@ export class WebsiteBucketStack extends cdk.Stack {
       errorResponses: [
         {
           httpStatus: 403,
-          responseHttpStatus: 200,
-          responsePagePath: '/index.html',
-          ttl: cdk.Duration.seconds(0),
+          responseHttpStatus: 404,
+          responsePagePath: '/error.html',
+          ttl: cdk.Duration.minutes(5),
         },
         {
           httpStatus: 404,
-          responseHttpStatus: 200,
-          responsePagePath: '/index.html',
-          ttl: cdk.Duration.seconds(0),
+          responseHttpStatus: 404,
+          responsePagePath: '/error.html',
+          ttl: cdk.Duration.minutes(5),
         },
       ],
       // Enable IPv6
