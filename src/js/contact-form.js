@@ -29,7 +29,7 @@ class ContactForm {
   checkSuccessRedirect() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
-      this.showStatus('success', "Message sent successfully! I'll get back to you soon.");
+      this.showStatus('success', 'Message sent successfully! I\'ll get back to you soon.');
       // Remove the success parameter from URL without page reload
       window.history.replaceState({}, document.title, window.location.pathname);
     }

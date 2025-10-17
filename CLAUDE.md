@@ -4,10 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Professional portfolio website for Dharam Bhushan - AWS Engineering Manager specializing in AI/ML services and data platforms. Static site built with vanilla HTML/CSS/JavaScript, hosted on AWS S3 with CloudFlare CDN.
+Professional portfolio website for Dharam Bhushan - AWS Engineering Manager specializing in AI/ML services and data platforms. Static site built with vanilla HTML/CSS/JavaScript, deployed using AWS CDK infrastructure as code, hosted on AWS S3 with CloudFlare CDN.
 
 **Technology Stack**: Vanilla JavaScript (ES2021), HTML5, CSS3 (no frameworks)
-**Hosting**: AWS S3 + CloudFlare CDN
+**Infrastructure**: AWS CDK (TypeScript) for S3 bucket
+**Hosting**: AWS S3 (bucket: dharam-personal-website-257641256327) + CloudFlare CDN
+**AWS Account**: 257641256327 (region: us-west-2)
+**Deployment**: Bash scripts for automated deployment
 **Performance Target**: < 1.5s initial load, Lighthouse score > 95
 
 ## Development Commands
@@ -15,11 +18,11 @@ Professional portfolio website for Dharam Bhushan - AWS Engineering Manager spec
 ### Local Development
 
 ```bash
-# Start development server on http://localhost:3000
-npm run dev
-
 # Install dependencies (first time only)
 npm install
+
+# Start development server on http://localhost:3000 (serves src/ directory)
+npm run dev
 ```
 
 ### Code Quality & Linting
@@ -49,6 +52,9 @@ npm run lint:js         # ESLint validation
 ### Build & Optimization
 
 ```bash
+# Build and validate website (runs build.sh script)
+npm run build
+
 # Run all optimizations (CSS minification, JS minification)
 npm run optimize
 
@@ -68,19 +74,49 @@ npm run lighthouse
 npm run validate
 ```
 
-### Deployment
+### Infrastructure Deployment
+
+```bash
+# Install CDK dependencies (first time only)
+npm run infra:install
+
+# Bootstrap CDK in AWS account (first time only)
+npm run infra:bootstrap
+
+# Deploy S3 bucket infrastructure
+npm run infra:deploy
+
+# Preview infrastructure changes
+npm run infra:diff
+
+# Synthesize CloudFormation template
+npm run infra:synth
+
+# Destroy infrastructure (WARNING: deletes bucket)
+npm run infra:destroy
+```
+
+### Website Deployment
 
 ```bash
 # Full deployment: build + upload to S3 + invalidate CloudFlare cache
 npm run deploy
 
 # Individual deployment steps
-npm run build                   # Prepare optimized assets
-npm run deploy:s3               # Upload to S3 bucket
-npm run invalidate:cloudflare   # Clear CloudFlare CDN cache
+npm run build                # Build and validate website (./scripts/build.sh)
+npm run deploy:s3            # Upload to S3 bucket (./scripts/deploy.sh)
+npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-cache.sh)
 ```
 
-**Note**: Deployment requires AWS CLI configured and `CF_DISTRIBUTION_ID` environment variable set.
+**Environment Variables Required**:
+
+- `S3_BUCKET_NAME` (default: dharam-personal-website-257641256327)
+- `AWS_REGION` (default: us-west-2)
+- `CLOUDFLARE_ZONE_ID` (for cache invalidation)
+- `CLOUDFLARE_API_TOKEN` (for cache invalidation)
+
+**AWS Account**: 257641256327 (us-west-2)
+**AWS Credentials**: Run `source ~/aws-credentials-export.zsh` to export credentials via IAM Roles Anywhere
 
 ## Architecture & Code Structure
 
@@ -97,31 +133,51 @@ npm run invalidate:cloudflare   # Clear CloudFlare CDN cache
 
 ```
 /
-├── index.html                  # Main landing page with hero section
-├── html/                       # Additional pages
-│   ├── ai_services.html       # AI/ML services portfolio (8 services)
-│   ├── data_platform.html     # Data platform projects (4 platforms)
-│   ├── leadership.html        # Management style & leadership
-│   ├── contact.html           # Contact form
-│   └── diagrams/              # Architecture diagram HTML files
-│       └── .htmlhintrc        # Directory-specific HTMLHint config
-├── css/                        # Modular CSS architecture
-│   ├── main.css               # Core styles, variables, reset, typography, layout
-│   ├── components.css         # Reusable UI components (cards, grids, badges, timeline)
-│   ├── themes.css             # Dark/light theme definitions with CSS variables
-│   └── animations.css         # Keyframes, transitions, scroll effects
-├── js/                         # JavaScript modules
-│   ├── main.js                # Core functionality (nav, scroll, lazy loading)
-│   ├── theme-toggle.js        # ThemeManager class for dark/light mode
-│   ├── animations.js          # ScrollReveal, ParallaxScroll, CountUp animations
-│   ├── modal.js               # ImageModal class for diagram/image viewing
-│   ├── contact-form.js        # Web3Forms integration for contact form
-│   ├── neural-network.js      # Canvas-based neural network animation
-│   └── analytics.js           # Privacy-focused analytics tracking
-├── assets/
-│   ├── images/                # Service diagrams, screenshots, profile photo
-│   ├── icons/                 # Favicons, technology logos
-│   └── resume/                # PDF resume downloads
+├── src/                        # Website source files
+│   ├── index.html             # Main landing page with hero section
+│   ├── html/                  # Additional pages
+│   │   ├── ai_services.html   # AI/ML services portfolio (8 services)
+│   │   ├── data_platform.html # Data platform projects (4 platforms)
+│   │   ├── leadership.html    # Management style & leadership
+│   │   ├── contact.html       # Contact form
+│   │   └── diagrams/          # Architecture diagram HTML files
+│   │       └── .htmlhintrc    # Directory-specific HTMLHint config
+│   ├── css/                   # Modular CSS architecture
+│   │   ├── main.css           # Core styles, variables, reset, typography, layout
+│   │   ├── components.css     # Reusable UI components (cards, grids, badges, timeline)
+│   │   ├── themes.css         # Dark/light theme definitions with CSS variables
+│   │   └── animations.css     # Keyframes, transitions, scroll effects
+│   ├── js/                    # JavaScript modules
+│   │   ├── main.js            # Core functionality (nav, scroll, lazy loading)
+│   │   ├── theme-toggle.js    # ThemeManager class for dark/light mode
+│   │   ├── animations.js      # ScrollReveal, ParallaxScroll, CountUp animations
+│   │   ├── modal.js           # ImageModal class for diagram/image viewing
+│   │   ├── contact-form.js    # Web3Forms integration for contact form
+│   │   ├── neural-network.js  # Canvas-based neural network animation
+│   │   ├── analytics.js       # Privacy-focused analytics tracking
+│   │   └── config.js          # Configuration (git-ignored, use config.example.js)
+│   └── assets/
+│       ├── images/            # Service diagrams, screenshots, profile photo
+│       ├── icons/             # Favicons, technology logos
+│       └── resume/            # PDF resume downloads
+├── infrastructure/            # AWS CDK infrastructure
+│   ├── bin/
+│   │   └── s3-stack.ts       # CDK app entry point
+│   ├── lib/
+│   │   └── website-bucket-stack.ts  # S3 bucket stack definition
+│   ├── cdk.json              # CDK configuration
+│   ├── package.json          # CDK dependencies
+│   ├── tsconfig.json         # TypeScript configuration
+│   └── README.md             # Infrastructure documentation
+├── scripts/                   # Deployment automation
+│   ├── build.sh              # Build and validate website
+│   ├── deploy.sh             # Deploy to S3 with cache headers
+│   └── invalidate-cache.sh   # Purge CloudFlare cache
+├── docs/
+│   └── cloudflare-setup.md   # CloudFlare CDN configuration guide
+├── dist/                      # Build output (git-ignored)
+│   ├── css/                  # Minified CSS
+│   └── js/                   # Minified JavaScript
 ```
 
 ### CSS Architecture
@@ -322,11 +378,11 @@ document.documentElement.setAttribute('data-theme', 'dark'); // or 'light'
 
 When adding new AI/ML services with architecture diagrams:
 
-1. Create service card in `html/ai_services.html` with `data-modal="unique-service-id"`
+1. Create service card in `src/html/ai_services.html` with `data-modal="unique-service-id"`
 2. Add diagram buttons with classes `.architecture-button` and/or `.output-button`
 3. Export Mermaid diagrams as PNG via https://mermaid.live/ (static images preferred over dynamic)
-4. Store images in `/assets/images/` with naming: `<service-id>__architecture.png`
-5. Update `modal.js` imageMap to include new service and image paths
+4. Store images in `/src/assets/images/` with naming: `<service-id>__architecture.png`
+5. Update `src/js/modal.js` imageMap to include new service and image paths
 
 ### Animation Triggers
 
@@ -388,7 +444,7 @@ The neural network animation provides an AI-inspired animated background across 
 
 ### Contact Form Integration
 
-**Web3Forms Setup** (`html/contact.html`):
+**Web3Forms Setup** (`src/html/contact.html`):
 
 - Form submits to `https://api.web3forms.com/submit` via POST (natural form submission, no JavaScript fetch)
 - Access key stored in hidden input: `<input type="hidden" name="access_key" value="...">`
@@ -409,16 +465,16 @@ The neural network animation provides an AI-inspired animated background across 
 **To Update Web3Forms Access Key**:
 
 1. Get new access key from https://web3forms.com
-2. Update the `value` attribute in the hidden `access_key` input in `html/contact.html:89`
+2. Update the `value` attribute in the hidden `access_key` input in `src/html/contact.html:143`
 
 **To Update Redirect URL for Production**:
 
-1. In `html/contact.html:93`, change redirect URL from `http://localhost:3000/html/contact?success=true` to `https://dharambhushan.com/html/contact?success=true`
+1. In `src/html/contact.html:148`, change redirect URL from `http://localhost:3000/html/contact?success=true` to `https://dharambhushan.com/html/contact?success=true`
 2. This ensures the success message appears correctly in production
 
 **Environment-Specific Configuration**:
 
-**IMPORTANT**: The contact form redirect URL in `html/contact.html` (line 69) must match your environment:
+**IMPORTANT**: The contact form redirect URL in `src/html/contact.html` (line 148) must match your environment:
 
 - **Development**: `http://localhost:3000/html/contact?success=true`
 - **Production**: `https://dharambhushan.com/html/contact?success=true`
@@ -434,16 +490,19 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 
 ## Deployment Architecture
 
-**Origin**: AWS S3 bucket (`s3://dharambhushan.com`) with static website hosting enabled
+**Origin**: AWS S3 bucket (`s3://dharam-personal-website-257641256327`) with static website hosting enabled
+**Region**: us-west-2
+**Account**: 257641256327
 **CDN**: CloudFlare (global edge caching, SSL/TLS, DDoS protection, auto minification)
 **DNS**: CloudFlare managed DNS
 
 **Deployment Flow**:
 
-1. `npm run optimize` - Minify CSS/JS
-2. `aws s3 sync . s3://dharambhushan.com` - Upload to S3 (excluding node_modules, .git)
-3. `aws cloudfront create-invalidation` - Clear CloudFlare cache
-4. Verify: Check production URL, run Lighthouse audit
+1. Export AWS credentials: `source ~/aws-credentials-export.zsh`
+2. `npm run build` - Build and validate website (via ./scripts/build.sh)
+3. `npm run deploy:s3` - Upload to S3 with cache headers (via ./scripts/deploy.sh)
+4. `npm run deploy:cloudflare` - Clear CloudFlare cache (via ./scripts/invalidate-cache.sh)
+5. Verify: Check production URL, run Lighthouse audit
 
 **Cache Headers**: 1-year cache for static assets (CSS/JS/images), 1-hour revalidation for HTML
 
@@ -451,9 +510,9 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 
 Before deploying to production, verify the following to avoid common issues:
 
-- [ ] **Contact form redirect URL** updated from `localhost:3000` to `https://dharambhushan.com` in `html/contact.html:69`
+- [ ] **Contact form redirect URL** updated from `localhost:3000` to `https://dharambhushan.com` in `src/html/contact.html:148`
 - [ ] **All image paths** are relative (start with `/`) not absolute
-- [ ] **Web3Forms access key** is valid and configured correctly in `html/contact.html:64`
+- [ ] **Web3Forms access key** is valid and configured correctly in `src/html/contact.html:143`
 - [ ] **All linters pass**: Run `npm run lint` with no errors
 - [ ] **Code formatting verified**: Run `npm run format:check` passes
 - [ ] **Performance audit**: Run `npm run lighthouse` and verify scores > 95
@@ -584,7 +643,7 @@ npm run validate:all && npm run lighthouse
 
 ### Contact Form Not Working
 
-- Verify the hidden `access_key` input field in `html/contact.html` has a valid Web3Forms access key
+- Verify the hidden `access_key` input field in `src/html/contact.html` has a valid Web3Forms access key
 - Check browser console for JavaScript errors during form submission
 - Test form submission and check Network tab for Web3Forms API response (should POST to `https://api.web3forms.com/submit`)
 - Verify form action is set to `https://api.web3forms.com/submit`
@@ -596,8 +655,20 @@ npm run validate:all && npm run lighthouse
 - Reinstall dependencies: `rm -rf node_modules && npm install`
 - Check Node.js version compatibility (modern Node.js recommended)
 
+## Project Structure Notes
+
+**Source Files**: All website files are in `src/` directory (moved from root in Oct 2025 refactor)
+**Development Server**: `npm run dev` now serves from `src/` directory on http://localhost:3000
+**Infrastructure as Code**: AWS S3 bucket deployed via AWS CDK in TypeScript (`infrastructure/` directory)
+**S3 Bucket**: dharam-personal-website-257641256327 (AWS account 257641256327, region us-west-2)
+**AWS Credentials**: Use `source ~/aws-credentials-export.zsh` to export via IAM Roles Anywhere
+**Deployment Scripts**: Bash scripts in `scripts/` for automated build, deploy, and cache invalidation
+**Build Output**: Minified assets go to `dist/` directory (git-ignored)
+
 ## Additional Documentation
 
+- **infrastructure/README.md**: AWS CDK infrastructure documentation, deployment guide, CloudFormation stack details
+- **docs/cloudflare-setup.md**: Comprehensive CloudFlare CDN setup guide with step-by-step instructions
 - **ARCHITECTURE.md**: Comprehensive architectural documentation (1500+ lines) covering component architecture, deployment, performance strategy, code quality infrastructure
-- **README.md**: Setup instructions, deployment guides, performance targets, code quality checklist
+- **README.md**: Setup instructions, deployment workflow, environment variables, troubleshooting
 - **package.json**: All npm scripts and dependencies listed with descriptions

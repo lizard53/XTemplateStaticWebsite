@@ -12,7 +12,7 @@ build/
 .env
 .env.local
 .env.*.local
-js/config.js
+src/js/config.js
 
 # IDE and editor files
 .vscode/
@@ -52,3 +52,18 @@ Desktop.ini
 
 # Claude Code
 .claude/
+
+# AWS CDK
+infrastructure/node_modules/
+infrastructure/dist/
+infrastructure/cdk.out/
+infrastructure/.cdk.staging/
+infrastructure/package-lock.json
+
+# AWS Credentials (never commit)
+.aws/
+credentials
+config
+
+# CloudFlare API tokens (never commit)
+.cloudflare/
