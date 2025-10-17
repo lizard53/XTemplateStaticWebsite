@@ -12,6 +12,7 @@ build/
 .env
 .env.local
 .env.*.local
+js/config.js
 
 # IDE and editor files
 .vscode/
