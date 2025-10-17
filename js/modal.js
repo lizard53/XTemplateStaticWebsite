@@ -46,6 +46,9 @@ class ImageModal {
       'data-warehouse-to-lake-migration': {
         architecture: '/assets/images/data_warehouse_to_lake_migration__architecture.png',
       },
+      'pii-redaction-synthetic-data-framework': {
+        architecture: '/assets/images/pii_redaction_synthetic_data_framework__architecture.png',
+      },
     };
 
     if (this.modal) {

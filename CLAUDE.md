@@ -259,6 +259,7 @@ Commits are **blocked** if linting fails. Fix errors or run `npm run lint:fix` b
 - Enforces semantic HTML5, lowercase tags/attributes, unique IDs
 - Requires `<title>`, `<!DOCTYPE>`, proper tag pairing
 - 4-space indentation for HTML
+- **Note**: The `html/diagrams/` directory has its own `.htmlhintrc` file with custom rules for diagram-specific HTML files
 
 **Stylelint** (`.stylelintrc.json`):
 
@@ -415,6 +416,15 @@ The neural network animation provides an AI-inspired animated background across 
 1. In `html/contact.html:93`, change redirect URL from `http://localhost:3000/html/contact?success=true` to `https://dharambhushan.com/html/contact?success=true`
 2. This ensures the success message appears correctly in production
 
+**Environment-Specific Configuration**:
+
+**IMPORTANT**: The contact form redirect URL in `html/contact.html` (line 69) must match your environment:
+
+- **Development**: `http://localhost:3000/html/contact?success=true`
+- **Production**: `https://dharambhushan.com/html/contact?success=true`
+
+This URL is hardcoded in the HTML form's hidden `redirect` input field and must be manually updated before production deployment. This is a common source of issues if forgotten.
+
 ### Performance Considerations
 
 - **Critical CSS**: Inline critical styles in `<head>` for faster FCP (planned)
@@ -436,6 +446,30 @@ The neural network animation provides an AI-inspired animated background across 
 4. Verify: Check production URL, run Lighthouse audit
 
 **Cache Headers**: 1-year cache for static assets (CSS/JS/images), 1-hour revalidation for HTML
+
+### Pre-Production Deployment Checklist
+
+Before deploying to production, verify the following to avoid common issues:
+
+- [ ] **Contact form redirect URL** updated from `localhost:3000` to `https://dharambhushan.com` in `html/contact.html:69`
+- [ ] **All image paths** are relative (start with `/`) not absolute
+- [ ] **Web3Forms access key** is valid and configured correctly in `html/contact.html:64`
+- [ ] **All linters pass**: Run `npm run lint` with no errors
+- [ ] **Code formatting verified**: Run `npm run format:check` passes
+- [ ] **Performance audit**: Run `npm run lighthouse` and verify scores > 95
+- [ ] **Test contact form**: Submit test message end-to-end and verify email delivery
+- [ ] **Theme toggle**: Works correctly on all pages (index, ai_services, data_platform, leadership, contact)
+- [ ] **Neural network backgrounds**: Render correctly on all pages without console errors
+- [ ] **Image modals**: Open correctly for all service cards with diagrams
+- [ ] **Cross-browser testing**: Test on Chrome, Firefox, Safari, and mobile browsers
+- [ ] **Accessibility**: Run browser accessibility audit (Lighthouse or axe DevTools)
+
+**Quick Validation Command**:
+
+```bash
+# Run all validations before deployment
+npm run validate:all && npm run lighthouse
+```
 
 ## Common Development Tasks
 
@@ -465,6 +499,21 @@ The neural network animation provides an AI-inspired animated background across 
 3. Add `data-modal="service-name"` if including diagrams
 4. Create diagram PNG and add to `/assets/images/`
 5. Update `modal.js` imageMap with new service entry
+
+### Adding a New Data Platform Card
+
+1. Copy existing platform card structure from `html/data_platform.html`
+2. Update: icon (emoji), title, description (focus on architecture and technical achievements)
+3. Update impact metrics with quantifiable results
+4. Add relevant tags (e.g., CDK, Data Lake, Medallion Architecture, etc.)
+5. If including architecture diagram:
+   - Add `data-modal="platform-name"` attribute to card
+   - Create Mermaid diagram in `/docs/platform-name-diagram.md`
+   - Export diagram as PNG from https://mermaid.live/
+   - Save as `/assets/images/platform_name__architecture.png` (note: double underscore)
+   - Add "View Architecture" button in `.card-actions` div
+   - Update `modal.js` imageMap with entry: `'platform-name': { architecture: '/assets/images/platform_name__architecture.png' }`
+6. Ensure `.card-actions` div is present for consistent button positioning (uses `margin-top: auto` for alignment)
 
 ### Updating Theme Colors
 

@@ -156,7 +156,7 @@
                 <span class="tag">CDK</span>
                 <span class="tag">Data Ingestion</span>
                 <span class="tag">Multi-Format</span>
-                <span class="tag">IaC</span>
+                <span class="tag">Infrastructure as Code</span>
               </div>
               <div class="card-actions">
                 <button
@@ -215,32 +215,47 @@
             </div>
 
             <!-- Platform Card 3 -->
-            <div class="card project-card reveal stagger-2">
+            <div
+              class="card project-card reveal stagger-2"
+              data-modal="pii-redaction-synthetic-data-framework"
+            >
               <div class="project-header">
-                <div class="project-icon">📊</div>
+                <div class="project-icon">🔒</div>
               </div>
-              <h3 class="card-title">Data Platform 3</h3>
+              <h3 class="card-title">PII Redaction & Synthetic Data Framework</h3>
               <p class="card-description">
-                Unified analytics platform enabling self-service BI and advanced analytics with
-                integrated data governance and lineage tracking.
+                Enterprise-grade framework for automated PII detection and redaction, generating
+                production-replica test datasets for data mesh environments. Leverages Amazon Macie
+                and Glue PII detection with deterministic hashing to maintain referential integrity
+                across entities. Consistent hash algorithms and salts enable seamless cross-system
+                joins while ensuring safe analytics and ML development in lower environments.
               </p>
               <div class="project-impact">
                 <p class="project-impact-title">Impact</p>
                 <div class="project-metrics">
                   <div class="metric">
-                    <span class="metric-value">500+</span>
-                    <span class="metric-label">Data Sources</span>
+                    <span class="metric-value">100%</span>
+                    <span class="metric-label">PII Protected</span>
                   </div>
                   <div class="metric">
-                    <span class="metric-value">10K+</span>
-                    <span class="metric-label">Users</span>
+                    <span class="metric-value">Prod-Replica</span>
+                    <span class="metric-label">Test Datasets</span>
                   </div>
                 </div>
               </div>
               <div class="tags">
-                <span class="tag">Analytics</span>
-                <span class="tag">Redshift</span>
-                <span class="tag">QuickSight</span>
+                <span class="tag">Data Privacy</span>
+                <span class="tag">Amazon Macie</span>
+                <span class="tag">Synthetic Data</span>
+                <span class="tag">Deterministic Hashing</span>
+              </div>
+              <div class="card-actions">
+                <button
+                  class="btn btn-secondary architecture-button"
+                  aria-label="View architecture"
+                >
+                  View Architecture
+                </button>
               </div>
             </div>
           </div>
