@@ -611,6 +611,12 @@ MIT License - See LICENSE file for details.
 
 ## Changelog
 
+### 2025-10-17 - GitHub Link Update & Script Fix
+
+- ✅ Updated GitHub link in contact page footer from /dharambhushan to /lizard53
+- ✅ Fixed CloudFlare cache invalidation script to correctly report success status
+- ✅ Script now properly detects `"success": true` response from CloudFlare API
+
 ### 2025-10-17 - Infrastructure Migration to us-east-1
 
 - ✅ Migrated all infrastructure from us-west-2 to us-east-1
