@@ -6,13 +6,59 @@ Build secure, high-performance static websites for ~$15/month using AWS CDK infr
 
 ## ✨ Features
 
-✅ **Multi-Layer Security**: CloudFlare DDoS + AWS WAF + CloudFront OAC
-✅ **Lightning Fast**: Dual CDN caching (CloudFlare + CloudFront)
-✅ **Cost Efficient**: ~$15/month for production hosting
-✅ **Infrastructure as Code**: AWS CDK (TypeScript)
-✅ **Dark/Light Themes**: Auto-detecting with localStorage persistence
-✅ **Performance Optimized**: Lighthouse score 95+, < 1.5s load time
-✅ **Code Quality**: ESLint, Prettier, Husky pre-commit hooks
+- ✅ **Multi-Layer Security**: CloudFlare DDoS + AWS WAF + CloudFront OAC
+- ✅ **Lightning Fast**: Dual CDN caching (CloudFlare + CloudFront)
+- ✅ **Cost Efficient**: ~$15/month for production hosting
+- ✅ **Infrastructure as Code**: AWS CDK (TypeScript)
+- ✅ **Dark/Light Themes**: Auto-detecting with localStorage persistence
+- ✅ **Performance Optimized**: Lighthouse score 95+, < 1.5s load time
+- ✅ **Code Quality**: ESLint, Prettier, Husky pre-commit hooks
+
+## 💡 Infrastructure Choices
+
+### Why This Architecture?
+
+This template uses a carefully designed multi-layer architecture that balances **cost**, **security**, and **performance**:
+
+**S3 for Static Hosting**
+
+- Cost-effective storage for static files (~$0.023/GB per month)
+- High durability (99.999999999%) and availability (99.99%)
+- No server maintenance required
+- Pay only for what you use
+
+**CloudFront for Secure Origin Access**
+
+- Secures traffic from CDN to S3 through Origin Access Control (OAC)
+- Integrates with AWS Certificate Manager (ACM) for free SSL/TLS certificates
+- Automatic certificate renewal (no manual intervention)
+- Custom domain support with HTTPS
+- AWS WAF integration for IP-based filtering
+
+**CloudFlare for CDN (Primary Edge Caching)**
+
+- **Significantly lower costs**: Free tier includes unlimited bandwidth
+- 300+ global edge locations (vs CloudFront's 400+)
+- Superior performance for static content delivery
+- DDoS protection included at no extra cost
+- Additional layer of caching reduces CloudFront requests
+
+**Security Through Allowlisting**
+
+- CloudFront configured with AWS WAF to **allowlist only CloudFlare IP ranges**
+- Multi-layer defense: CloudFlare DDoS protection → WAF IP filtering → CloudFront OAC → Private S3
+- End-to-end HTTPS encryption throughout the chain
+- No direct S3 access - everything goes through CloudFront
+
+**Cost Breakdown (~$15/month)**
+
+- S3 storage: ~$1-2/month (depends on content size)
+- CloudFront: ~$8-10/month (data transfer, reduced by CloudFlare caching)
+- Route53 (DNS): ~$0.50/month per hosted zone
+- ACM certificates: **FREE**
+- CloudFlare CDN: **FREE** (unlimited bandwidth on free tier)
+
+This architecture delivers enterprise-grade performance and security at **~95% less cost** than traditional hosting solutions.
 
 ## 🏗️ Architecture
 
