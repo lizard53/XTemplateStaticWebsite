@@ -54,7 +54,7 @@ This template uses a carefully designed multi-layer architecture that balances *
 
 - S3 storage: ~$1-2/month (depends on content size)
 - CloudFront: ~$8-10/month (data transfer, reduced by CloudFlare caching)
-- Route53 (DNS): ~$0.50/month per hosted zone
+- Domain registration: ~$10-15/year (self-managed via CloudFlare or other registrar)
 - ACM certificates: **FREE**
 - CloudFlare CDN: **FREE** (unlimited bandwidth on free tier)
 
