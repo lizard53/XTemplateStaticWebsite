@@ -1,5 +1,5 @@
 /**
- * Main JavaScript - dharambhushan.com
+ * Main JavaScript
  * Core functionality and interactions
  */
 

@@ -1,7 +1,7 @@
 {
-  "name": "dharambhushan-infrastructure",
+  "name": "website-infrastructure",
   "version": "1.0.0",
-  "description": "AWS CDK infrastructure for dharambhushan.com portfolio website",
+  "description": "AWS CDK infrastructure for portfolio website (CloudFront + S3 + WAF)",
   "main": "bin/s3-stack.js",
   "scripts": {
     "build": "tsc",
@@ -16,10 +16,13 @@
   "keywords": [
     "aws-cdk",
     "infrastructure",
+    "cloudfront",
     "s3",
-    "static-website"
+    "waf",
+    "static-website",
+    "portfolio"
   ],
-  "author": "Dharam Bhushan",
+  "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.0",

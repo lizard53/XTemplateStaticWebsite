@@ -1,5 +1,5 @@
 /**
- * Animations - dharambhushan.com
+ * Animations
  * Scroll-triggered animations and micro-interactions
  */
 

@@ -1,11 +1,18 @@
-# Complete Deployment Guide - dharambhushan.com
+# Complete Deployment Guide
 
-This guide covers the complete deployment of dharambhushan.com with the secure CloudFront + WAF + CloudFlare architecture.
+This guide covers the complete deployment of your portfolio website with the secure CloudFront + WAF + CloudFlare architecture.
+
+**Replace all example values with your actual values**:
+
+- `example.com` → your actual domain
+- `123456789012` → your AWS account ID
+- `d123example456.cloudfront.net` → your CloudFront distribution domain (from CDK output)
+- `E123EXAMPLE456` → your CloudFront distribution ID (from CDK output)
 
 ## Architecture Overview
 
 ```
-User Request (https://dharambhushan.com)
+User Request (https://example.com)
     ↓
 CloudFlare CDN (SSL/TLS Full Strict, Caching, DDoS Protection)
     ↓ HTTPS
@@ -26,11 +33,11 @@ Static Website Files
 
 ## Prerequisites
 
-- ✅ AWS Account: 257641256327
-- ✅ Domain `dharambhushan.com` in CloudFlare
+- ✅ AWS Account (replace `123456789012` with your actual AWS account ID)
+- ✅ Domain registered and managed in CloudFlare (or your DNS provider)
 - ✅ AWS CLI configured with credentials
 - ✅ Node.js 18+ installed
-- ✅ CDK dependencies installed
+- ✅ CDK dependencies installed (`npm install` in infrastructure directory)
 
 ## Step 1: Create ACM Certificate
 
@@ -41,11 +48,11 @@ Static Website Files
 ```bash
 # Request certificate in us-east-1
 aws acm request-certificate \
-  --domain-name dharambhushan.com \
-  --subject-alternative-names www.dharambhushan.com \
+  --domain-name example.com \
+  --subject-alternative-names www.example.com \
   --validation-method DNS \
   --region us-east-1 \
-  --tags Key=Project,Value=DharamBhushanPortfolio
+  --tags Key=Project,Value=Portfolio
 ```
 
 ### Add DNS Validation Records in CloudFlare
@@ -55,30 +62,54 @@ aws acm request-certificate \
 3. **IMPORTANT**: Set **Proxy status to DNS only** (gray cloud) for validation records
 4. Wait 10-20 minutes for validation
 
-See detailed guide: `docs/acm-certificate-setup.md`
+See detailed guide: `docs/ACM_CERTIFICATE_SETUP.md`
 
 ### Save Certificate ARN
 
 ```bash
-# Add to ~/.zshrc or ~/.bashrc
-export CERTIFICATE_ARN='arn:aws:acm:us-east-1:257641256327:certificate/xxxxx-xxxx-xxxx'
+# Add to ~/.zshrc or ~/.bashrc (replace with your actual certificate ARN)
+export CERTIFICATE_ARN='arn:aws:acm:us-east-1:123456789012:certificate/xxxxx-xxxx-xxxx'
+
+# Reload shell
+source ~/.zshrc  # or source ~/.bashrc
 ```
+
+**Alternative**: Update `infrastructure/cdk.json` line 18 with your certificate ARN.
 
 ## Step 2: Deploy Infrastructure
 
 ### Set Environment Variables
 
+**IMPORTANT**: Replace all example values with your actual values.
+
 ```bash
-export CDK_DEFAULT_ACCOUNT=257641256327
-export CDK_DEFAULT_REGION=us-west-2
-export CERTIFICATE_ARN='arn:aws:acm:us-east-1:257641256327:certificate/xxxxx-xxxx-xxxx'
+# Replace with your actual AWS account ID
+export CDK_DEFAULT_ACCOUNT=123456789012
+
+# Region for CDK stack (can be any region, but us-east-1 recommended for global distribution)
+export CDK_DEFAULT_REGION=us-east-1
+
+# Your ACM certificate ARN (MUST be in us-east-1)
+export CERTIFICATE_ARN='arn:aws:acm:us-east-1:123456789012:certificate/xxxxx-xxxx-xxxx'
+
+# Your domain name
+export DOMAIN_NAME='example.com'
 ```
 
 ### Deploy CDK Stack
 
 ```bash
 # From project root
+# Export AWS credentials (adjust command based on your credential setup)
 source ~/aws-credentials-export.zsh
+
+# Install CDK dependencies (first time only)
+cd infrastructure
+npm install
+cd ..
+
+# Bootstrap CDK (first time only)
+npm run infra:bootstrap
 
 # Deploy infrastructure
 npm run infra:deploy
@@ -94,16 +125,28 @@ This creates:
 
 ### Save Stack Outputs
 
-After deployment, save these values:
+After deployment completes, CDK will output important values. Save them as environment variables:
 
 ```bash
-# CloudFront Distribution Domain
-# Example: d1234567890abc.cloudfront.net
-export CLOUDFRONT_DOMAIN='<from-stack-output>'
+# CloudFront Distribution Domain (use this as your CloudFlare CNAME target)
+# Example from CDK output: d123example456.cloudfront.net
+export CLOUDFRONT_DOMAIN='d123example456.cloudfront.net'
 
-# CloudFront Distribution ID (for cache invalidation)
-export CLOUDFRONT_DISTRIBUTION_ID='<from-stack-output>'
+# CloudFront Distribution ID (needed for cache invalidation)
+# Example from CDK output: E123EXAMPLE456
+export CLOUDFRONT_DISTRIBUTION_ID='E123EXAMPLE456'
+
+# S3 Bucket Name (needed for deployment)
+# Example from CDK output: website-123456789012-us-east-1
+export S3_BUCKET_NAME='website-123456789012-us-east-1'
+
+# Add to ~/.zshrc or ~/.bashrc to persist
+echo "export CLOUDFRONT_DOMAIN='d123example456.cloudfront.net'" >> ~/.zshrc
+echo "export CLOUDFRONT_DISTRIBUTION_ID='E123EXAMPLE456'" >> ~/.zshrc
+echo "export S3_BUCKET_NAME='website-123456789012-us-east-1'" >> ~/.zshrc
 ```
+
+**Replace the example values above with the actual values from your CDK deployment output.**
 
 ## Step 3: Deploy Website Content to S3
 
@@ -119,14 +162,14 @@ This uploads all website files to S3 with optimized cache headers.
 ### DNS Configuration
 
 1. Log in to CloudFlare: https://dash.cloudflare.com/
-2. Select `dharambhushan.com`
+2. Select `example.com`
 3. Go to **DNS** → **Records**
 
 #### Add/Update Root Domain Record
 
 - **Type**: `CNAME`
 - **Name**: `@`
-- **Target**: `d1234567890abc.cloudfront.net` (your CloudFront domain)
+- **Target**: `d123example456.cloudfront.net` (your CloudFront domain)
 - **Proxy status**: ✅ **Proxied** (orange cloud - MUST be enabled)
 - **TTL**: Auto
 
@@ -134,7 +177,7 @@ This uploads all website files to S3 with optimized cache headers.
 
 - **Type**: `CNAME`
 - **Name**: `www`
-- **Target**: `d1234567890abc.cloudfront.net`
+- **Target**: `d123example456.cloudfront.net`
 - **Proxy status**: ✅ **Proxied** (orange cloud)
 - **TTL**: Auto
 
@@ -187,34 +230,44 @@ For cache invalidation when deploying:
 3. Permissions:
    - Zone → Cache Purge → Purge
    - Zone → Zone → Read
-4. Zone Resources: `dharambhushan.com`
+4. Zone Resources: `example.com`
 5. Create and **copy the token**
 
 ### Get Zone ID
 
 1. Go to CloudFlare dashboard
-2. Select `dharambhushan.com`
+2. Select `example.com`
 3. Scroll down on Overview page
 4. Copy **Zone ID** from right sidebar
 
 ### Set Environment Variables
 
 ```bash
-# Add to ~/.zshrc or ~/.bashrc
-export CLOUDFLARE_ZONE_ID='your-zone-id'
-export CLOUDFLARE_API_TOKEN='your-api-token'
-export CLOUDFRONT_DISTRIBUTION_ID='your-distribution-id'
+# Add to ~/.zshrc or ~/.bashrc (replace with your actual values)
+export CLOUDFLARE_ZONE_ID='your-zone-id-here'
+export CLOUDFLARE_API_TOKEN='your-api-token-here'
+export CLOUDFRONT_DISTRIBUTION_ID='E123EXAMPLE456'
+export S3_BUCKET_NAME='website-123456789012-us-east-1'
+export AWS_REGION='us-east-1'
 
 # Reload shell
-source ~/.zshrc
+source ~/.zshrc  # or source ~/.bashrc
 ```
+
+**How to get these values**:
+
+- `CLOUDFLARE_ZONE_ID`: From CloudFlare dashboard → select your domain → Overview page → right sidebar
+- `CLOUDFLARE_API_TOKEN`: Created in previous step (Step 5)
+- `CLOUDFRONT_DISTRIBUTION_ID`: From CDK deployment output (Step 2)
+- `S3_BUCKET_NAME`: From CDK deployment output (Step 2)
+- `AWS_REGION`: Region where your infrastructure is deployed (typically `us-east-1`)
 
 ## Step 6: Test the Deployment
 
 ### Test DNS Resolution
 
 ```bash
-dig dharambhushan.com
+dig example.com
 ```
 
 Should resolve to CloudFlare IPs.
@@ -222,7 +275,7 @@ Should resolve to CloudFlare IPs.
 ### Test HTTPS Access
 
 ```bash
-curl -I https://dharambhushan.com
+curl -I https://example.com
 ```
 
 Check for:
@@ -234,7 +287,7 @@ Check for:
 
 ### Open in Browser
 
-Visit: https://dharambhushan.com
+Visit: https://example.com
 
 Verify:
 
@@ -347,7 +400,7 @@ CloudFlare → CloudFront (HTTPS) → S3 (OAC)
 
 ### Website Not Loading
 
-1. **Check DNS**: `dig dharambhushan.com`
+1. **Check DNS**: `dig example.com`
 2. **Check CloudFlare proxy**: Must be orange cloud (proxied)
 3. **Check SSL/TLS mode**: Must be Full (strict)
 4. **Check WAF**: Verify CloudFlare IPs are in allow list
@@ -369,7 +422,7 @@ CloudFlare → CloudFront (HTTPS) → S3 (OAC)
 ### Certificate Errors
 
 - Verify ACM certificate is in us-east-1
-- Check certificate includes both dharambhushan.com and www.dharambhushan.com
+- Check certificate includes both example.com and www.example.com
 - Verify certificate is "Issued" status
 
 ### Slow Performance
@@ -412,9 +465,9 @@ CloudFlare IP ranges change occasionally. Update WAF:
 
 ## Resources
 
-- **ACM Setup**: `docs/acm-certificate-setup.md`
-- **CloudFlare Setup**: `docs/cloudflare-setup.md` (legacy, needs update)
-- **Infrastructure README**: `infrastructure/README.md`
+- **ACM Setup**: `docs/ACM_CERTIFICATE_SETUP.md` - Detailed guide for creating and validating ACM certificates
+- **CloudFlare Setup**: `docs/CLOUDFLARE_SETUP.md` - Comprehensive CloudFlare configuration guide
+- **Infrastructure README**: `infrastructure/README.md` - AWS CDK infrastructure documentation
 - **AWS CloudFront Docs**: https://docs.aws.amazon.com/cloudfront/
 - **AWS WAF Docs**: https://docs.aws.amazon.com/waf/
 - **CloudFlare Docs**: https://developers.cloudflare.com/

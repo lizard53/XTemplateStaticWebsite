@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################################################################
-# deploy.sh - Deployment script for dharambhushan.com to AWS S3
+# deploy.sh - Deployment script for static website to AWS S3
 #
 # This script:
 # 1. Validates AWS credentials
@@ -12,7 +12,7 @@
 # Usage: ./scripts/deploy.sh [bucket-name]
 #
 # Environment variables:
-#   S3_BUCKET_NAME - S3 bucket name (default: dharam-personal-website-257641256327-us-east-1)
+#   S3_BUCKET_NAME - S3 bucket name (required - no default)
 #   AWS_REGION     - AWS region (default: us-east-1)
 ###############################################################################
 
@@ -27,11 +27,19 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-BUCKET_NAME="${1:-${S3_BUCKET_NAME:-dharam-personal-website-257641256327-us-east-1}}"
+BUCKET_NAME="${1:-${S3_BUCKET_NAME:-}}"
 AWS_REGION="${AWS_REGION:-us-east-1}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 SRC_DIR="$PROJECT_ROOT/src"
+
+# Validate bucket name is provided
+if [ -z "$BUCKET_NAME" ]; then
+  echo -e "${RED}Error: S3 bucket name is required${NC}"
+  echo "Usage: $0 <bucket-name>"
+  echo "   or: S3_BUCKET_NAME=<bucket-name> $0"
+  exit 1
+fi
 
 echo -e "${GREEN}====================================${NC}"
 echo -e "${GREEN}Deploying to AWS S3${NC}"

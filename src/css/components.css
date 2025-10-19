@@ -1,5 +1,5 @@
 /* ==========================================
-   COMPONENT STYLES - dharambhushan.com
+   COMPONENT STYLES - Professional Website Template
    Reusable UI components
    ========================================== */
 
@@ -19,6 +19,12 @@
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--color-primary);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-md);
+  display: block;
 }
 
 .card-title {

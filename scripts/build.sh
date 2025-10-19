@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################################################################
-# build.sh - Build script for dharambhushan.com portfolio website
+# build.sh - Build script for static website
 #
 # This script:
 # 1. Validates HTML, CSS, and JavaScript
@@ -27,7 +27,7 @@ SRC_DIR="$PROJECT_ROOT/src"
 DIST_DIR="$PROJECT_ROOT/dist"
 
 echo -e "${GREEN}====================================${NC}"
-echo -e "${GREEN}Building dharambhushan.com website${NC}"
+echo -e "${GREEN}Building Static Website${NC}"
 echo -e "${GREEN}====================================${NC}"
 echo ""
 
@@ -86,9 +86,7 @@ npx terser \
   "$SRC_DIR/js/main.js" \
   "$SRC_DIR/js/theme-toggle.js" \
   "$SRC_DIR/js/animations.js" \
-  "$SRC_DIR/js/modal.js" \
-  "$SRC_DIR/js/contact-form.js" \
-  "$SRC_DIR/js/neural-network.js" \
+  "$SRC_DIR/js/animated-background.js" \
   "$SRC_DIR/js/analytics.js" \
   -o "$DIST_DIR/js/bundle.min.js" \
   --compress \

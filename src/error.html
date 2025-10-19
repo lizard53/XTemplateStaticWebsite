@@ -1,23 +1,22 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- Primary Meta Tags -->
-    <title>Page Not Found | Dharam Bhushan</title>
-    <meta name="title" content="Page Not Found | Dharam Bhushan" />
+    <title>Page Not Found | Website Template</title>
+    <meta name="title" content="Page Not Found" />
     <meta name="description" content="The page you're looking for doesn't exist." />
-    <meta name="author" content="Dharam Bhushan" />
+    <meta name="author" content="Website Template" />
     <meta name="robots" content="noindex, nofollow" />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://dharambhushan.com/error.html" />
+    <link rel="canonical" href="https://yourwebsite.com/error.html" />
 
-    <!-- Preload Critical Resources -->
-    <link rel="preload" href="/css/main.css" as="style" />
-    <link rel="preload" href="/css/themes.css" as="style" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico" />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/main.css" />
@@ -25,85 +24,67 @@
     <link rel="stylesheet" href="/css/themes.css" />
     <link rel="stylesheet" href="/css/animations.css" />
   </head>
-  <body>
-    <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
 
+  <body>
     <!-- Header -->
-    <header class="site-header">
-      <nav class="nav-container" role="navigation" aria-label="Main navigation">
-        <div class="logo">
-          <a href="/" aria-label="Home">DB</a>
-        </div>
-        <ul class="nav-menu">
-          <li><a href="/">Home</a></li>
-          <li><a href="/html/ai_services.html">AI Services</a></li>
-          <li><a href="/html/data_platform.html">Data Platform</a></li>
-          <li><a href="/html/leadership.html">Management Style</a></li>
-          <li><a href="/html/contact.html">Contact</a></li>
-        </ul>
-        <div class="nav-actions">
-          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-            <span class="theme-icon"></span>
+    <header class="header">
+      <div class="container">
+        <nav class="nav" role="navigation" aria-label="Main navigation">
+          <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
-          <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle menu">
-            <span class="hamburger"></span>
-          </button>
-        </div>
-      </nav>
+
+          <ul class="nav-menu" role="menubar">
+            <li role="none"><a href="/" class="nav-link" role="menuitem">Home</a></li>
+            <li role="none">
+              <button class="theme-toggle" aria-label="Toggle dark/light mode" role="menuitem">
+                <span class="theme-icon">🌙</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <!-- Main Content -->
-    <main id="main-content">
-      <!-- Error Hero Section -->
-      <section id="error" class="hero" aria-label="Error page">
-        <div class="hero-background"></div>
+    <main>
+      <!-- Error Section -->
+      <section class="hero error-section">
         <div class="container">
           <div
             class="error-content"
-            style="
-              text-align: center;
-              padding: 6rem 2rem;
-              min-height: 60vh;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-            "
+            style="text-align: center; padding: 6rem 2rem; min-height: 60vh"
           >
             <div
-              class="error-code"
+              class="error-code reveal"
               style="
-                font-size: clamp(4rem, 15vw, 10rem);
+                font-size: clamp(6rem, 15vw, 12rem);
                 font-weight: 800;
                 line-height: 1;
-                background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+                background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
-                margin-bottom: 1rem;
-                font-family: var(--font-heading);
+                margin-bottom: 2rem;
               "
             >
               404
             </div>
+
             <h1
-              class="error-title"
-              style="
-                font-size: clamp(2rem, 5vw, 3rem);
-                font-weight: 700;
-                margin-bottom: 1.5rem;
-                color: var(--text-primary);
-                font-family: var(--font-heading);
-              "
+              class="reveal"
+              style="font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 1.5rem"
             >
               Page Not Found
             </h1>
+
             <p
-              class="error-message"
+              class="reveal"
               style="
                 font-size: clamp(1.125rem, 2vw, 1.25rem);
-                color: var(--text-secondary);
+                color: var(--color-text-secondary);
                 max-width: 600px;
                 margin: 0 auto 3rem;
                 line-height: 1.6;
@@ -112,70 +93,26 @@
               Sorry, the page you're looking for doesn't exist or has been moved. Let's get you back
               on track.
             </p>
+
             <div
-              class="error-actions"
-              style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center"
+              class="error-actions reveal"
+              style="
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-bottom: 4rem;
+              "
             >
-              <a href="/" class="btn btn-primary"> Go to Homepage </a>
-              <a href="/html/ai_services.html" class="btn btn-secondary"> View AI Services </a>
-              <a href="/html/contact.html" class="btn btn-secondary"> Contact Me </a>
-            </div>
-            <div
-              class="error-suggestions"
-              style="margin-top: 4rem; text-align: left; max-width: 600px"
-            >
-              <h2
-                style="
-                  font-size: 1.5rem;
-                  font-weight: 600;
-                  margin-bottom: 1rem;
-                  color: var(--text-primary);
-                  font-family: var(--font-heading);
-                "
+              <a
+                href="/"
+                class="card"
+                style="text-decoration: none; display: inline-block; max-width: 300px"
               >
-                Popular Pages:
-              </h2>
-              <ul style="list-style: none; padding: 0; margin: 0">
-                <li style="margin-bottom: 0.75rem">
-                  <a
-                    href="/html/ai_services.html"
-                    style="
-                      color: var(--primary-color);
-                      text-decoration: none;
-                      font-size: 1.125rem;
-                      transition: color 0.2s ease;
-                    "
-                  >
-                    → AI/ML Services Portfolio
-                  </a>
-                </li>
-                <li style="margin-bottom: 0.75rem">
-                  <a
-                    href="/html/data_platform.html"
-                    style="
-                      color: var(--primary-color);
-                      text-decoration: none;
-                      font-size: 1.125rem;
-                      transition: color 0.2s ease;
-                    "
-                  >
-                    → Data Platform Projects
-                  </a>
-                </li>
-                <li style="margin-bottom: 0.75rem">
-                  <a
-                    href="/html/leadership.html"
-                    style="
-                      color: var(--primary-color);
-                      text-decoration: none;
-                      font-size: 1.125rem;
-                      transition: color 0.2s ease;
-                    "
-                  >
-                    → Leadership & Management Style
-                  </a>
-                </li>
-              </ul>
+                <div class="card-icon">🏠</div>
+                <h3 class="card-title">Go to Homepage</h3>
+                <p class="card-description">Return to the main landing page</p>
+              </a>
             </div>
           </div>
         </div>
@@ -183,10 +120,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="site-footer">
+    <footer class="footer">
       <div class="container">
-        <div class="footer-content">
-          <p>&copy; 2025 Dharam Bhushan. All rights reserved.</p>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Website Template. Built with Claude AI. Open source and free to use.</p>
+          <div class="footer-links-inline">
+            <a href="https://github.com/yourusername/website-template">GitHub</a>
+            <a href="https://claude.ai">Built with Claude</a>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
-# CloudFlare Setup Guide for dharambhushan.com
+# CloudFlare Setup Guide
 
-This guide walks through setting up CloudFlare as an additional CDN layer for the dharambhushan.com portfolio website hosted on AWS with CloudFront + WAF + S3.
+This guide walks through setting up CloudFlare as an additional CDN layer for your portfolio website hosted on AWS with CloudFront + WAF + S3.
 
 ## Overview
 
@@ -16,7 +16,7 @@ CloudFlare acts as an additional Content Delivery Network (CDN) layer on top of 
 ## Architecture
 
 ```
-User Request (https://dharambhushan.com)
+User Request (https://example.com)
     ↓
 CloudFlare CDN (SSL/TLS Full Strict, Edge Caching, DDoS Protection)
     ↓ HTTPS (validated ACM certificate)
@@ -49,21 +49,21 @@ Static Website Files
 - ✅ AWS WAF configured to allow only CloudFlare IP ranges
 - ✅ ACM certificate in us-east-1 for CloudFront custom domain
 - ✅ S3 bucket with CloudFront Origin Access Control (OAC)
-- ✅ Domain `dharambhushan.com` already in CloudFlare
+- ✅ Domain name (e.g., `example.com`)
 - ✅ CloudFlare account (free tier is sufficient)
 
-**Current Infrastructure Configuration**:
+**Example Infrastructure Configuration** (replace with your actual values):
 
-- **S3 Bucket**: `dharam-personal-website-257641256327-us-east-1`
+- **S3 Bucket**: `website-123456789012-us-east-1` (auto-generated from your AWS account ID)
 - **Region**: `us-east-1`
-- **CloudFront Distribution ID**: `E14SW9FUYL655V`
-- **CloudFront Domain**: `d25p12sd2oijz4.cloudfront.net`
-- **ACM Certificate**: `arn:aws:acm:us-east-1:257641256327:certificate/b30ce704-7d37-4200-9815-037c834bdf41`
-- **Custom Domain**: `dharambhushan.com`, `www.dharambhushan.com`
+- **CloudFront Distribution ID**: `E123EXAMPLE456` (from CDK deployment output)
+- **CloudFront Domain**: `d123example456.cloudfront.net` (from CDK deployment output)
+- **ACM Certificate**: `arn:aws:acm:us-east-1:123456789012:certificate/abc123...` (your certificate ARN)
+- **Custom Domain**: `example.com`, `www.example.com`
 
 ## Step 1: Configure DNS Records
 
-**Important**: Since `dharambhushan.com` is already in CloudFlare, skip nameserver setup and go directly to DNS configuration.
+**Note**: If your domain is not yet in CloudFlare, add it first by updating nameservers at your domain registrar to CloudFlare's nameservers.
 
 1. **Log in to CloudFlare Dashboard**
 
@@ -71,7 +71,7 @@ Static Website Files
 
 2. **Select Your Domain**
 
-   Click on `dharambhushan.com`
+   Click on your domain (e.g., `example.com`)
 
 3. **Navigate to DNS**
 
@@ -81,8 +81,8 @@ Static Website Files
 
    Click "Add record" or edit existing:
    - **Type**: `CNAME`
-   - **Name**: `@` (represents root domain dharambhushan.com)
-   - **Target**: `d25p12sd2oijz4.cloudfront.net`
+   - **Name**: `@` (represents root domain, e.g., example.com)
+   - **Target**: `d123example456.cloudfront.net` (your CloudFront distribution domain from CDK output)
    - **Proxy status**: ✅ **Proxied** (orange cloud icon - MUST be enabled)
    - **TTL**: Auto
    - Click **Save**
@@ -92,7 +92,7 @@ Static Website Files
    Click "Add record":
    - **Type**: `CNAME`
    - **Name**: `www`
-   - **Target**: `d25p12sd2oijz4.cloudfront.net`
+   - **Target**: `d123example456.cloudfront.net` (your CloudFront distribution domain)
    - **Proxy status**: ✅ **Proxied** (orange cloud - MUST be enabled)
    - **TTL**: Auto
    - Click **Save**
@@ -110,7 +110,7 @@ Static Website Files
 
 1. **Navigate to SSL/TLS Settings**
 
-   `dharambhushan.com` → **SSL/TLS** → **Overview**
+   Your domain (e.g., `example.com`) → **SSL/TLS** → **Overview**
 
 2. **Select Encryption Mode**
    - Choose: **Full (strict)**
@@ -149,7 +149,7 @@ Static Website Files
 
 1. **Navigate to Caching Settings**
 
-   `dharambhushan.com` → **Caching** → **Configuration**
+   `example.com` → **Caching** → **Configuration**
 
 2. **Caching Level**
    - Select: **Standard** (caches static resources based on file extensions)
@@ -162,31 +162,31 @@ Static Website Files
    Go to **Rules** → **Page Rules** (Free plan allows 3 rules)
 
    **Page Rule 1 - Cache HTML with Short TTL**:
-   - URL pattern: `dharambhushan.com/*.html`
+   - URL pattern: `example.com/*.html`
    - Settings:
      - **Browser Cache TTL**: 1 hour
      - **Edge Cache TTL**: 1 hour
    - Click **Save and Deploy**
 
    **Page Rule 2 - Cache Assets Aggressively**:
-   - URL pattern: `dharambhushan.com/assets/*`
+   - URL pattern: `example.com/assets/*`
    - Settings:
      - **Cache Level**: Cache Everything
      - **Edge Cache TTL**: 1 month
    - Click **Save and Deploy**
 
    **Page Rule 3 - WWW to Non-WWW Redirect** (Optional):
-   - URL pattern: `www.dharambhushan.com/*`
+   - URL pattern: `www.example.com/*`
    - Settings:
      - **Forwarding URL**: 301 - Permanent Redirect
-     - **Destination URL**: `https://dharambhushan.com/$1`
+     - **Destination URL**: `https://example.com/$1`
    - Click **Save and Deploy**
 
 ## Step 4: Configure Speed Optimizations
 
 1. **Navigate to Speed Settings**
 
-   `dharambhushan.com` → **Speed** → **Optimization**
+   `example.com` → **Speed** → **Optimization**
 
 2. **Auto Minify**
 
@@ -209,7 +209,7 @@ Static Website Files
 
 1. **Navigate to Security Settings**
 
-   `dharambhushan.com` → **Security** → **Settings**
+   `example.com` → **Security** → **Settings**
 
 2. **Security Level**
    - Select: **Medium** (balanced security and user experience)
@@ -237,7 +237,7 @@ To use the `npm run deploy:cloudflare` script, you need a CloudFlare API token.
      - Zone → Cache Purge → Purge
      - Zone → Zone → Read
    - **Zone Resources**:
-     - Include → Specific zone → Select `dharambhushan.com`
+     - Include → Specific zone → Select `example.com`
    - **Client IP Address Filtering**: Leave blank (optional)
    - **TTL**: Leave as default
 
@@ -249,7 +249,7 @@ To use the `npm run deploy:cloudflare` script, you need a CloudFlare API token.
 
 5. **Get Your Zone ID**
    - Go back to CloudFlare dashboard: https://dash.cloudflare.com/
-   - Select `dharambhushan.com`
+   - Select `example.com`
    - On the **Overview** page, scroll down
    - Find **Zone ID** in the right sidebar (under API section)
    - Copy the Zone ID
@@ -259,17 +259,19 @@ To use the `npm run deploy:cloudflare` script, you need a CloudFlare API token.
    Add these to your `~/.zshrc` or `~/.bashrc`:
 
    ```bash
-   # CloudFlare Configuration for dharambhushan.com
+   # CloudFlare Configuration (replace with your actual values)
    export CLOUDFLARE_ZONE_ID='your-zone-id-here'
    export CLOUDFLARE_API_TOKEN='your-api-token-here'
 
-   # CloudFront Configuration
-   export CLOUDFRONT_DISTRIBUTION_ID='E14SW9FUYL655V'
-   export S3_BUCKET_NAME='dharam-personal-website-257641256327-us-east-1'
+   # CloudFront Configuration (from your CDK deployment outputs)
+   export CLOUDFRONT_DISTRIBUTION_ID='E123EXAMPLE456'  # Your distribution ID
+   export S3_BUCKET_NAME='website-123456789012-us-east-1'  # Your bucket name
    export AWS_REGION='us-east-1'
    ```
 
-   Replace `your-zone-id-here` and `your-api-token-here` with your actual values.
+   **Replace all example values with your actual values**:
+   - Get `CLOUDFRONT_DISTRIBUTION_ID` and `S3_BUCKET_NAME` from CDK deployment outputs
+   - Get `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_API_TOKEN` from CloudFlare dashboard
 
    Then reload your shell:
 
@@ -282,7 +284,7 @@ To use the `npm run deploy:cloudflare` script, you need a CloudFlare API token.
 ### Test DNS Resolution
 
 ```bash
-dig dharambhushan.com
+dig example.com
 ```
 
 Ensure it resolves to CloudFlare IPs (not CloudFront or S3 IPs directly).
@@ -290,7 +292,7 @@ Ensure it resolves to CloudFlare IPs (not CloudFront or S3 IPs directly).
 ### Test HTTPS
 
 ```bash
-curl -I https://dharambhushan.com
+curl -I https://example.com
 ```
 
 Check for:
@@ -315,7 +317,7 @@ server: cloudflare
 
 ### Test Website in Browser
 
-1. Open browser and navigate to: https://dharambhushan.com
+1. Open browser and navigate to: https://example.com
 2. Verify:
    - Site loads correctly
    - SSL certificate shows (padlock icon)
@@ -336,7 +338,7 @@ Test both CloudFlare and CloudFront cache invalidation:
 npm run deploy:cloudflare
 
 # Clear CloudFront cache
-aws cloudfront create-invalidation --distribution-id E14SW9FUYL655V --paths "/*"
+aws cloudfront create-invalidation --distribution-id E123EXAMPLE456 --paths "/*"
 ```
 
 CloudFlare cache purge should show:
@@ -367,7 +369,7 @@ Target scores:
 
 **CloudFlare Analytics**:
 
-1. Go to CloudFlare dashboard → `dharambhushan.com`
+1. Go to CloudFlare dashboard → `example.com`
 2. Navigate to **Analytics** → **Caching**
 3. Check **Cache Hit Ratio**
    - Target: 90%+ (indicates effective caching)
@@ -376,7 +378,7 @@ Target scores:
 **CloudFront Monitoring**:
 
 1. Go to AWS Console → CloudFront → Distributions
-2. Select distribution `E14SW9FUYL655V`
+2. Select distribution `E123EXAMPLE456`
 3. Navigate to **Monitoring** tab
 4. Check cache hit rate and requests metrics
 
@@ -404,7 +406,7 @@ npm run deploy
 
 ```bash
 # Complete deployment with both CDN cache invalidation
-npm run deploy && aws cloudfront create-invalidation --distribution-id E14SW9FUYL655V --paths "/*"
+npm run deploy && aws cloudfront create-invalidation --distribution-id E123EXAMPLE456 --paths "/*"
 ```
 
 ### Individual Deployment Steps
@@ -417,7 +419,7 @@ npm run build
 npm run deploy:s3
 
 # 3. Invalidate CloudFront cache
-aws cloudfront create-invalidation --distribution-id E14SW9FUYL655V --paths "/*"
+aws cloudfront create-invalidation --distribution-id E123EXAMPLE456 --paths "/*"
 
 # 4. Purge CloudFlare cache
 npm run deploy:cloudflare
@@ -463,13 +465,13 @@ CloudFlare's IP ranges change occasionally. Update the AWS WAF IP sets:
 
 **CloudFlare Analytics**:
 
-- Navigate to CloudFlare dashboard → `dharambhushan.com` → **Analytics** → **Caching**
+- Navigate to CloudFlare dashboard → `example.com` → **Analytics** → **Caching**
 - **Target**: 90%+ cache hit ratio
 - If low, review caching rules and adjust
 
 **CloudFront Monitoring**:
 
-- Navigate to AWS Console → CloudFront → Distributions → `E14SW9FUYL655V`
+- Navigate to AWS Console → CloudFront → Distributions → `E123EXAMPLE456`
 - Check **Monitoring** tab for cache hit rate
 - Review **Reports & analytics** for detailed metrics
 
@@ -480,13 +482,13 @@ CloudFlare's IP ranges change occasionally. Update the AWS WAF IP sets:
 npm run deploy:cloudflare
 
 # Purge CloudFront cache
-aws cloudfront create-invalidation --distribution-id E14SW9FUYL655V --paths "/*"
+aws cloudfront create-invalidation --distribution-id E123EXAMPLE456 --paths "/*"
 
 # Or purge specific files from CloudFlare (manual API call)
 curl -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
   -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
   -H "Content-Type: application/json" \
-  --data '{"files":["https://dharambhushan.com/index.html"]}'
+  --data '{"files":["https://example.com/index.html"]}'
 ```
 
 ## Troubleshooting
@@ -498,7 +500,7 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/p
 1. Check DNS propagation: https://dnschecker.org/
 2. Verify CloudFlare nameservers are set correctly at registrar
 3. Check CloudFlare status: https://www.cloudflarestatus.com/
-4. Verify CNAME target is `d25p12sd2oijz4.cloudfront.net`
+4. Verify CNAME target is `d123example456.cloudfront.net`
 
 **CloudFlare Configuration**:
 
@@ -509,7 +511,7 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/p
 **CloudFront Configuration**:
 
 1. Verify distribution status is "Deployed" in AWS Console
-2. Check CloudFront domain resolves: `dig d25p12sd2oijz4.cloudfront.net`
+2. Check CloudFront domain resolves: `dig d123example456.cloudfront.net`
 3. Test CloudFront direct access (should work if WAF allows your IP or temporarily disable WAF)
 
 ### SSL Errors
@@ -561,7 +563,7 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/p
 
 1. Purge both caches:
    - CloudFlare: `npm run deploy:cloudflare`
-   - CloudFront: `aws cloudfront create-invalidation --distribution-id E14SW9FUYL655V --paths "/*"`
+   - CloudFront: `aws cloudfront create-invalidation --distribution-id E123EXAMPLE456 --paths "/*"`
 2. Check browser cache (hard refresh: Cmd+Shift+R or Ctrl+Shift+R)
 3. Verify cache rules in both CloudFlare and CloudFront
 4. Check `Cache-Control` headers from S3
@@ -651,8 +653,8 @@ Use this checklist to verify your CloudFlare + CloudFront setup:
 
 **DNS Configuration**:
 
-- [ ] DNS CNAME record created: `@` → `d25p12sd2oijz4.cloudfront.net`
-- [ ] DNS CNAME record for www (optional): `www` → `d25p12sd2oijz4.cloudfront.net`
+- [ ] DNS CNAME record created: `@` → `d123example456.cloudfront.net`
+- [ ] DNS CNAME record for www (optional): `www` → `d123example456.cloudfront.net`
 - [ ] Proxy status (orange cloud) enabled for both records
 
 **CloudFlare SSL/TLS**:
@@ -683,7 +685,7 @@ Use this checklist to verify your CloudFlare + CloudFront setup:
 **CloudFront Configuration**:
 
 - [ ] Distribution status is "Deployed"
-- [ ] Custom domain configured: `dharambhushan.com`, `www.dharambhushan.com`
+- [ ] Custom domain configured: `example.com`, `www.example.com`
 - [ ] ACM certificate attached
 - [ ] Origin Access Control (OAC) configured for S3
 
@@ -702,12 +704,12 @@ Use this checklist to verify your CloudFlare + CloudFront setup:
 
 **Testing**:
 
-- [ ] Website accessible at https://dharambhushan.com
+- [ ] Website accessible at https://example.com
 - [ ] SSL certificate valid (CloudFlare)
 - [ ] CloudFront headers present (x-amz-cf-id)
 - [ ] Cache purge scripts tested:
   - [ ] CloudFlare: `npm run deploy:cloudflare`
-  - [ ] CloudFront: `aws cloudfront create-invalidation --distribution-id E14SW9FUYL655V --paths "/*"`
+  - [ ] CloudFront: `aws cloudfront create-invalidation --distribution-id E123EXAMPLE456 --paths "/*"`
 
 ## Resources
 
@@ -758,7 +760,7 @@ Use this checklist to verify your CloudFlare + CloudFront setup:
 **For Deployment Issues**:
 
 1. Check AWS credentials: `aws sts get-caller-identity`
-2. Verify S3 bucket exists: `aws s3 ls s3://dharam-personal-website-257641256327-us-east-1`
+2. Verify S3 bucket exists: `aws s3 ls s3://website-123456789012-us-east-1`
 3. Test deployment script manually: `./scripts/deploy.sh`
 4. Review CloudFlare API token permissions
 5. Check CloudFront distribution status

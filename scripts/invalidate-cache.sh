@@ -10,7 +10,7 @@
 # Environment variables:
 #   CLOUDFLARE_ZONE_ID - CloudFlare zone ID (required)
 #   CLOUDFLARE_API_TOKEN - CloudFlare API token with cache purge permissions (required)
-#   DOMAIN_NAME - Domain name (default: dharambhushan.com)
+#   DOMAIN_NAME - Domain name (default: your-domain.com)
 ###############################################################################
 
 set -e  # Exit on error
@@ -24,7 +24,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-DOMAIN_NAME="${DOMAIN_NAME:-dharambhushan.com}"
+DOMAIN_NAME="${DOMAIN_NAME:-your-domain.com}"
 ZONE_ID="${CLOUDFLARE_ZONE_ID:-}"
 API_TOKEN="${CLOUDFLARE_API_TOKEN:-}"
 
@@ -39,7 +39,7 @@ if [ -z "$ZONE_ID" ]; then
   echo ""
   echo "To find your Zone ID:"
   echo "  1. Log in to CloudFlare dashboard"
-  echo "  2. Select your domain ($DOMAIN_NAME)"
+  echo "  2. Select your domain"
   echo "  3. Scroll down to find 'Zone ID' in the right sidebar"
   echo ""
   echo "Then set it:"
@@ -56,7 +56,7 @@ if [ -z "$API_TOKEN" ]; then
   echo "  2. Click 'Create Token'"
   echo "  3. Use template 'Edit zone DNS' or create custom token with:"
   echo "     - Zone.Cache Purge permissions"
-  echo "     - Zone Resources: Include > Specific zone > $DOMAIN_NAME"
+  echo "     - Zone Resources: Include > Specific zone > your-domain"
   echo ""
   echo "Then set it:"
   echo "  export CLOUDFLARE_API_TOKEN='your-api-token'"

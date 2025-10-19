@@ -123,7 +123,7 @@ The bucket policy is configured to allow CloudFlare IP ranges. To use CloudFlare
 
 1. Add the **BucketDomainName** as the origin in CloudFlare
 2. Configure CloudFlare DNS to point to CloudFlare's proxy
-3. See `../docs/cloudflare-setup.md` for detailed instructions
+3. See `../docs/CLOUDFLARE_SETUP.md` for detailed instructions
 
 ## Security Considerations
 

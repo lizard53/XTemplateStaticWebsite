@@ -8,12 +8,12 @@ import { Construct } from 'constructs';
 
 export interface WebsiteBucketStackProps extends cdk.StackProps {
   /**
-   * The domain name for the website (e.g., 'dharambhushan.com')
+   * The domain name for the website (e.g., 'example.com')
    */
   domainName: string;
 
   /**
-   * The S3 bucket name (e.g., 'dharam-personal-website-257641256327')
+   * The S3 bucket name (e.g., 'website-123456789012-us-east-1')
    */
   bucketName: string;
 
@@ -127,7 +127,7 @@ export class WebsiteBucketStack extends cdk.Stack {
 
     // Create Web ACL with CloudFlare IP allow rule and default block
     this.webAcl = new wafv2.CfnWebACL(this, 'CloudFrontWebACL', {
-      name: 'DharamBhushanCloudFrontWAF',
+      name: 'WebsiteCloudFrontWAF',
       scope: 'CLOUDFRONT',
       defaultAction: {
         block: {}, // Block all traffic by default
@@ -172,7 +172,7 @@ export class WebsiteBucketStack extends cdk.Stack {
       visibilityConfig: {
         sampledRequestsEnabled: true,
         cloudWatchMetricsEnabled: true,
-        metricName: 'DharamBhushanCloudFrontWAF',
+        metricName: 'WebsiteCloudFrontWAF',
       },
     });
 
@@ -192,7 +192,7 @@ export class WebsiteBucketStack extends cdk.Stack {
 
     // Create CloudFront distribution
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
-      comment: 'CloudFront distribution for dharambhushan.com',
+      comment: `CloudFront distribution for ${props.domainName}`,
       defaultRootObject: 'index.html',
       // Domain names
       domainNames: certificate ? [props.domainName, `www.${props.domainName}`] : undefined,
@@ -205,7 +205,7 @@ export class WebsiteBucketStack extends cdk.Stack {
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
         compress: true,
         cachePolicy: new cloudfront.CachePolicy(this, 'CachePolicy', {
-          cachePolicyName: 'DharamBhushanCachePolicy',
+          cachePolicyName: 'WebsiteDefaultCachePolicy',
           comment: 'Cache policy for website assets',
           defaultTtl: cdk.Duration.hours(24),
           minTtl: cdk.Duration.seconds(0),
@@ -224,7 +224,7 @@ export class WebsiteBucketStack extends cdk.Stack {
           origin: origins.S3BucketOrigin.withOriginAccessControl(this.websiteBucket),
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: new cloudfront.CachePolicy(this, 'HTMLCachePolicy', {
-            cachePolicyName: 'DharamBhushanHTMLCache',
+            cachePolicyName: 'WebsiteHTMLCachePolicy',
             defaultTtl: cdk.Duration.hours(1),
             minTtl: cdk.Duration.seconds(0),
             maxTtl: cdk.Duration.hours(24),
@@ -235,7 +235,7 @@ export class WebsiteBucketStack extends cdk.Stack {
           origin: origins.S3BucketOrigin.withOriginAccessControl(this.websiteBucket),
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: new cloudfront.CachePolicy(this, 'AssetsCachePolicy', {
-            cachePolicyName: 'DharamBhushanAssetsCache',
+            cachePolicyName: 'WebsiteAssetsCachePolicy',
             defaultTtl: cdk.Duration.days(365),
             minTtl: cdk.Duration.days(1),
             maxTtl: cdk.Duration.days(365),

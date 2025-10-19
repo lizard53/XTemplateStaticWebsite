@@ -2,18 +2,73 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+## ⚠️ TEMPLATE NOTICE FOR AI AGENTS
+
+**This is a TEMPLATE repository** for building secure, professional static websites with AWS infrastructure.
+
+### If Setting Up a New Website from This Template:
+
+**DO NOT work on code directly yet.** Follow these steps first:
+
+1. **For AI-assisted setup**: See `docs/AI_AGENT_INSTRUCTIONS.md` for guided workflow
+2. **For manual setup**:
+   - Install dependencies: `npm install`
+   - Customize `src/index.html` with your content
+   - Update meta tags, titles, and descriptions
+   - Replace placeholder text with your website information
+   - Test locally: `npm run dev`
+
+3. **Verify setup**:
+   - Check that placeholder content was replaced correctly
+   - Test locally: `npm run dev` (http://localhost:3000)
+   - Review changes before committing
+
+4. **Then proceed** with normal development using the instructions below
+
+### Key Customization Points:
+
+**AWS Configuration**:
+
+- `aws.accountId` - AWS account ID (12 digits)
+- `aws.region` - AWS region (recommend: us-east-1)
+- `CERTIFICATE_ARN` - ACM certificate ARN (must be in us-east-1)
+- `DOMAIN_NAME` - Your custom domain (e.g., "example.com")
+
+**Files to Customize**:
+
+- `src/index.html` - Main landing page content
+- `src/assets/images/` - Replace with your images
+- `src/assets/icons/` - Replace favicon and app icons
+- Environment variables for deployment
+
+**AWS Infrastructure**:
+
+- Create ACM certificate in us-east-1 BEFORE deploying infrastructure
+- Set environment variables: `CDK_DEFAULT_ACCOUNT`, `CDK_DEFAULT_REGION`, `CERTIFICATE_ARN`
+- Deploy: `npm run infra:deploy`
+
+### Template vs. Production:
+
+- **Template state**: Contains placeholder demonstration content
+- **Production state**: After customization, contains your actual website content
+- **Development**: Use `npm run dev` to test locally before deployment
+
+---
+
 ## Project Overview
 
-Professional portfolio website for Dharam Bhushan - AWS Engineering Manager specializing in AI/ML services and data platforms. Static site built with vanilla HTML/CSS/JavaScript, deployed using AWS CDK infrastructure as code, hosted on AWS S3 with CloudFlare CDN.
+Secure, high-performance static website template built with AI assistance. Demonstrates professional web development using modern tooling, AWS infrastructure-as-code, and multi-layer security architecture.
 
 **Technology Stack**: Vanilla JavaScript (ES2021), HTML5, CSS3 (no frameworks)
 **Infrastructure**: AWS CDK (TypeScript) for CloudFront + WAF + S3
 **Hosting**: AWS S3 + CloudFront + WAF + CloudFlare CDN (multi-layer security)
-**AWS Account**: 257641256327 (region: us-east-1, ACM cert: us-east-1)
 **Deployment**: Bash scripts + CDK for automated infrastructure and content deployment
 **Performance Target**: < 1.5s initial load, Lighthouse score > 95
+**Cost**: ~$15/month for production hosting (S3 + CloudFront + Route53)
 
-**IMPORTANT**: Infrastructure deployed in us-east-1 (not us-west-2) as of October 2025
+**IMPORTANT**: All infrastructure must be deployed in us-east-1 region for CloudFront compatibility
 
 ## Development Commands
 
@@ -112,16 +167,20 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 
 **Environment Variables Required**:
 
-- `S3_BUCKET_NAME` (default: dharam-personal-website-257641256327-us-east-1)
-- `AWS_REGION` (default: us-east-1)
-- `CERTIFICATE_ARN` (ACM certificate ARN: arn:aws:acm:us-east-1:257641256327:certificate/b30ce704-7d37-4200-9815-037c834bdf41)
-- `CLOUDFRONT_DISTRIBUTION_ID` (CloudFront distribution: E14SW9FUYL655V)
-- `CLOUDFLARE_ZONE_ID` (for CloudFlare cache invalidation)
-- `CLOUDFLARE_API_TOKEN` (for CloudFlare cache invalidation)
+- `S3_BUCKET_NAME` - Auto-generated: `website-{accountId}-{region}`
+- `AWS_REGION` - Default: us-east-1 (required for CloudFront)
+- `CDK_DEFAULT_ACCOUNT` - Your AWS account ID (12 digits)
+- `CDK_DEFAULT_REGION` - AWS region (must be us-east-1)
+- `CERTIFICATE_ARN` - ACM certificate ARN (e.g., `arn:aws:acm:us-east-1:123456789012:certificate/...`)
+- `DOMAIN_NAME` - Your custom domain (e.g., `example.com`)
+- `CLOUDFRONT_DISTRIBUTION_ID` - From CDK stack output after deployment
+- `CLOUDFLARE_ZONE_ID` - For CloudFlare cache invalidation (optional)
+- `CLOUDFLARE_API_TOKEN` - For CloudFlare cache invalidation (optional)
 
-**AWS Account**: 257641256327 (us-east-1)
-**AWS Credentials**: Run `source ~/aws-credentials-export.zsh` to export credentials via IAM Roles Anywhere
-**CloudFront Domain**: d25p12sd2oijz4.cloudfront.net (use as CloudFlare CNAME target)
+**AWS Configuration**:
+
+- Region: us-east-1 (required for CloudFront and ACM certificate)
+- CloudFront Domain: Provided in CDK stack output (use as CloudFlare CNAME target)
 
 ## Architecture & Code Structure
 
@@ -129,16 +188,62 @@ npm run deploy:cloudflare    # Clear CloudFlare CDN cache (./scripts/invalidate-
 
 **Secure JAMstack with Multi-Layer CDN + WAF**
 
+```mermaid
+graph TB
+    User[User Browser]
+    CF[CloudFlare CDN<br/>Edge Caching + DDoS Protection]
+    CFront[AWS CloudFront<br/>Custom Domain + WAF]
+    WAF[AWS WAF<br/>IP Filtering]
+    S3[AWS S3 Bucket<br/>Private Storage]
+
+    User -->|HTTPS| CF
+    CF -->|HTTPS<br/>Validated ACM Cert| CFront
+    WAF -.->|Attached to| CFront
+    CFront -->|HTTPS<br/>OAC Signed Requests| S3
+
+    style User fill:#e1f5ff
+    style CF fill:#f9a825
+    style CFront fill:#ff9800
+    style WAF fill:#f44336
+    style S3 fill:#4caf50
 ```
-User Request (https://dharambhushan.com)
-    ↓
-CloudFlare CDN (SSL/TLS Full Strict, Edge Caching, DDoS Protection)
-    ↓ HTTPS (validated ACM certificate)
-AWS CloudFront (Custom Domain, ACM Certificate, WAF IP Filtering)
-    ↓ HTTPS (OAC Signed Requests)
-AWS S3 Bucket (Private, CloudFront OAC only)
-    ↓
-Static Website Files
+
+**Request Flow Sequence**:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant CloudFlare
+    participant WAF
+    participant CloudFront
+    participant S3
+
+    User->>CloudFlare: HTTPS Request (example.com)
+    CloudFlare->>CloudFlare: Check cache
+    alt Cache Hit
+        CloudFlare-->>User: Cached Response
+    else Cache Miss
+        CloudFlare->>WAF: Forward Request
+        WAF->>WAF: Verify CloudFlare IP
+        alt IP Allowed
+            WAF->>CloudFront: Allow Request
+            CloudFront->>CloudFront: Check cache
+            alt CloudFront Cache Hit
+                CloudFront-->>CloudFlare: Cached Response
+            else CloudFront Cache Miss
+                CloudFront->>S3: OAC Signed Request
+                S3->>S3: Verify OAC signature
+                S3-->>CloudFront: Static File
+                CloudFront->>CloudFront: Cache response
+                CloudFront-->>CloudFlare: Response
+            end
+            CloudFlare->>CloudFlare: Cache response
+            CloudFlare-->>User: Final Response
+        else IP Blocked
+            WAF-->>CloudFlare: 403 Forbidden
+            CloudFlare-->>User: Access Denied
+        end
+    end
 ```
 
 **Architecture Benefits**:
@@ -148,6 +253,7 @@ Static Website Files
 - ✅ **Performance**: Dual CDN caching (CloudFlare edge + CloudFront regional)
 - ✅ **Access Control**: WAF allows only CloudFlare IPv4/IPv6 ranges, S3 allows only CloudFront OAC
 - ✅ **Certificate Management**: ACM certificate in us-east-1 with automatic renewal
+- ✅ **Cost Efficient**: ~$15/month for production hosting
 
 **Security Layers**:
 
@@ -157,19 +263,38 @@ Static Website Files
 4. **S3 Bucket Policy**: Allows only CloudFront service principal with distribution ARN validation
 5. **Full (Strict) SSL**: CloudFlare validates CloudFront's ACM certificate
 
+**Infrastructure Deployment Flow**:
+
+```mermaid
+graph LR
+    A[Create ACM Certificate<br/>in us-east-1] --> B[Add DNS Validation<br/>Records]
+    B --> C[Wait for Certificate<br/>Validation]
+    C --> D[Set Environment<br/>Variables]
+    D --> E[Run CDK Bootstrap<br/>First Time Only]
+    E --> F[Deploy CDK Stack<br/>CloudFront + WAF + S3]
+    F --> G[Configure CloudFlare<br/>DNS CNAME]
+    G --> H[Deploy Website<br/>Content to S3]
+    H --> I[Invalidate Caches<br/>CloudFront + CloudFlare]
+
+    style A fill:#4caf50
+    style C fill:#ff9800
+    style F fill:#2196f3
+    style H fill:#9c27b0
+    style I fill:#f44336
+```
+
 ### File Organization
 
 ```
 /
 ├── src/                        # Website source files
-│   ├── index.html             # Main landing page with hero section
+│   ├── index.html             # Main landing page (single-page design)
 │   ├── error.html             # Custom 404 error page
-│   ├── html/                  # Additional pages
-│   │   ├── ai_services.html   # AI/ML services portfolio (8 services)
-│   │   ├── data_platform.html # Data platform projects (4 platforms)
-│   │   ├── leadership.html    # Management style & leadership
-│   │   ├── contact.html       # Contact form
-│   │   └── diagrams/          # Architecture diagram HTML files
+│   ├── html/                  # Example pages (reference only)
+│   │   ├── ai_services.example.html   # Example: AI/ML services page
+│   │   ├── data_platform.example.html # Example: Data platform projects
+│   │   ├── leadership.example.html    # Example: Leadership page
+│   │   └── diagrams/          # Architecture diagram examples
 │   │       └── .htmlhintrc    # Directory-specific HTMLHint config
 │   ├── css/                   # Modular CSS architecture
 │   │   ├── main.css           # Core styles, variables, reset, typography, layout
@@ -181,14 +306,13 @@ Static Website Files
 │   │   ├── theme-toggle.js    # ThemeManager class for dark/light mode
 │   │   ├── animations.js      # ScrollReveal, ParallaxScroll, CountUp animations
 │   │   ├── modal.js           # ImageModal class for diagram/image viewing
-│   │   ├── contact-form.js    # Web3Forms integration for contact form
+│   │   ├── contact-form.js    # Contact form handler (optional)
 │   │   ├── neural-network.js  # Canvas-based neural network animation
 │   │   ├── analytics.js       # Privacy-focused analytics tracking
 │   │   └── config.js          # Configuration (git-ignored, use config.example.js)
 │   └── assets/
-│       ├── images/            # Service diagrams, screenshots, profile photo
-│       ├── icons/             # Favicons, technology logos
-│       └── resume/            # PDF resume downloads
+│       ├── images/            # Website images and graphics
+│       └── icons/             # Favicons and app icons
 ├── infrastructure/            # AWS CDK infrastructure (CloudFront + WAF + S3)
 │   ├── bin/
 │   │   └── s3-stack.ts       # CDK app entry point (stack configuration)
@@ -204,8 +328,8 @@ Static Website Files
 │   └── invalidate-cache.sh   # Purge CloudFlare cache
 ├── docs/
 │   ├── DEPLOYMENT_GUIDE.md   # Complete deployment guide for CloudFront + WAF architecture
-│   ├── acm-certificate-setup.md  # ACM certificate creation in us-east-1 for CloudFront
-│   └── cloudflare-setup.md   # CloudFlare CDN configuration guide
+│   ├── ACM_CERTIFICATE_SETUP.md  # ACM certificate creation in us-east-1 for CloudFront
+│   └── CLOUDFLARE_SETUP.md   # CloudFlare CDN configuration guide
 ├── dist/                      # Build output (git-ignored)
 │   ├── css/                  # Minified CSS
 │   └── js/                   # Minified JavaScript
@@ -245,7 +369,7 @@ Static Website Files
 
 2. **theme-toggle.js** - ThemeManager class (singleton)
    - Dark/light mode switching
-   - Persists to `localStorage` as `dharambhushan-theme`
+   - Persists to `localStorage` as `website-theme`
    - Auto-detects system preference via `prefers-color-scheme`
    - Prevents flash of unstyled content
    - Emits `themechange` custom event
@@ -263,12 +387,11 @@ Static Website Files
    - Image mapping stored in `imageMap` object
    - Example: `data-modal="recommendation-engine"` → loads images from `imageMap['recommendation-engine']`
 
-5. **contact-form.js** - ContactForm class
-   - Web3Forms API integration for contact form submissions (https://web3forms.com)
-   - Access key stored directly in HTML hidden input field
+5. **contact-form.js** - ContactForm class (optional)
+   - Contact form submission handler
    - Client-side form validation (email, required fields)
    - Handles form submission states (loading, success, error)
-   - Uses fetch API to submit form data to Web3Forms endpoint
+   - Can be integrated with any form backend service
 
 6. **neural-network.js** - NeuralNetworkBackground class
    - Canvas-based animated neural network visualization for AI-themed backgrounds
@@ -293,36 +416,33 @@ Static Website Files
 - Event delegation for dynamic elements
 - Lazy loading for images and non-critical resources
 
-### Modal System Architecture (Important)
+### Modal System Architecture (Optional)
 
-The modal system in `modal.js` handles displaying architecture diagrams and service output images for AI/ML service cards:
+The modal system in `modal.js` handles displaying images (architecture diagrams, screenshots, etc.):
 
 **How It Works**:
 
-1. Service cards in `html/ai_services.html` have `data-modal="<service-id>"` attribute
-2. Buttons within cards have classes: `.architecture-button` or `.output-button`
-3. Clicking a button finds the parent card via `button.closest('[data-modal]')`
-4. Modal looks up `card.dataset.modal` in `ImageModal.imageMap` object
-5. Displays corresponding image based on button type (architecture or output)
+1. Elements with `data-modal="<modal-id>"` attribute trigger modal
+2. Buttons within elements have classes defining modal type
+3. Clicking a button finds the parent element via `closest('[data-modal]')`
+4. Modal looks up `element.dataset.modal` in `ImageModal.imageMap` object
+5. Displays corresponding image
 
 **Image Map Structure**:
 
 ```javascript
 this.imageMap = {
-  'recommendation-engine': {
-    output: '/assets/images/recommendation_engine.png',
-    architecture: '/assets/images/recommendation_engine__architecture.png',
-  },
-  'vector-search': {
-    architecture: '/assets/images/vector__index_search.png',
+  'feature-name': {
+    screenshot: '/assets/images/feature_screenshot.png',
+    architecture: '/assets/images/feature_architecture.png',
   },
 };
 ```
 
-**Adding New Service Diagrams**:
+**Adding New Images to Modal**:
 
-1. Add `data-modal="service-name"` to the service card
-2. Add buttons with `.architecture-button` or `.output-button` classes
+1. Add `data-modal="unique-id"` to the element
+2. Add button with appropriate class (`.architecture-button`, `.screenshot-button`, etc.)
 3. Update `imageMap` in `modal.js` with image paths
 4. Store images in `/assets/images/` directory
 
@@ -402,18 +522,18 @@ Commits are **blocked** if linting fails. Fix errors or run `npm run lint:fix` b
 document.documentElement.setAttribute('data-theme', 'dark'); // or 'light'
 ```
 
-**Storage**: `localStorage.getItem('dharambhushan-theme')` - persists user preference
+**Storage**: `localStorage.getItem('website-theme')` - persists user preference
 **System Detection**: `window.matchMedia('(prefers-color-scheme: dark)')`
 
-### Service Cards with Diagrams
+### Content Cards with Images (Optional)
 
-When adding new AI/ML services with architecture diagrams:
+When adding content cards with images or diagrams:
 
-1. Create service card in `src/html/ai_services.html` with `data-modal="unique-service-id"`
-2. Add diagram buttons with classes `.architecture-button` and/or `.output-button`
-3. Export Mermaid diagrams as PNG via https://mermaid.live/ (static images preferred over dynamic)
-4. Store images in `/src/assets/images/` with naming: `<service-id>__architecture.png`
-5. Update `src/js/modal.js` imageMap to include new service and image paths
+1. Create card element with `data-modal="unique-id"` attribute
+2. Add buttons with appropriate classes (`.architecture-button`, `.screenshot-button`, etc.)
+3. Export diagrams as PNG via https://mermaid.live/ (static images preferred)
+4. Store images in `/src/assets/images/` with descriptive naming
+5. Update `src/js/modal.js` imageMap to include new entries
 
 ### Animation Triggers
 
@@ -423,95 +543,59 @@ Elements with class `.reveal` automatically animate on scroll via IntersectionOb
 - Animation threshold: 15% of element visible (configurable in `animations.js`)
 - CSS transition in `animations.css` handles visual effect
 
-### Neural Network Background System
+### Animated Background System (Optional)
 
-**Full-Page Background Implementation** (used on all main pages):
+**Full-Page Background Implementation**:
 
-The neural network animation provides an AI-inspired animated background across the entire page:
+The neural network animation provides an animated background (optional, can be customized):
 
 **HTML Structure**:
 
 ```html
 <body>
   <!-- Add container at top of body -->
-  <div id="page-name-background" class="neural-network-background"></div>
+  <div id="page-background" class="neural-network-background"></div>
 
   <!-- Rest of page content -->
 </body>
 ```
 
-**Active Background IDs**:
-
-- `#home` - Homepage hero section (contained)
-- `#ai-services-background` - Full-page background for AI Services page
-- `#data-platform-background` - Full-page background for Data Platform page
-- `#leadership-background` - Full-page background for Leadership page
-- `#contact-background` - Full-page background for Contact page
-
 **How It Works**:
 
 1. Container with specific ID is detected by `neural-network.js` on page load
 2. Canvas element is created and appended to the container
-3. For `.neural-network-background` class: Uses `position: fixed` to cover entire viewport during scroll
-4. For section-specific backgrounds (like `#home`): Uses `position: absolute` within container
-5. Animation runs at 60fps using `requestAnimationFrame`
-6. Mouse movements create interactive connection highlights
-7. Automatically respects `prefers-reduced-motion` accessibility setting
+3. Uses `position: fixed` to cover entire viewport during scroll
+4. Animation runs at 60fps using `requestAnimationFrame`
+5. Mouse movements create interactive connection highlights
+6. Automatically respects `prefers-reduced-motion` accessibility setting
 
-**Adding Background to New Page**:
+**Adding Background to Page**:
 
-1. Add `<div id="new-page-background" class="neural-network-background"></div>` at top of `<body>`
-2. Add initialization in `neural-network.js` DOMContentLoaded handler:
-   ```javascript
-   const newPageBackground = document.getElementById('new-page-background');
-   if (newPageBackground) {
-     const neuralBg = new NeuralNetworkBackground('new-page-background');
-     window.addEventListener('beforeunload', () => {
-       neuralBg.destroy();
-     });
-   }
-   ```
-3. Background will automatically cover full viewport and remain visible during scroll
+1. Add `<div id="page-background" class="neural-network-background"></div>` at top of `<body>`
+2. Add initialization in `neural-network.js` DOMContentLoaded handler
+3. Customize colors and particle count as needed
+4. Background will automatically cover full viewport and remain visible during scroll
 
-### Contact Form Integration
+**Note**: The animated background is optional and can be removed if not needed for your website design.
 
-**Web3Forms Setup** (`src/html/contact.html`):
+### Contact Form Integration (Optional)
 
-- Form submits to `https://api.web3forms.com/submit` via POST (natural form submission, no JavaScript fetch)
-- Access key stored in hidden input: `<input type="hidden" name="access_key" value="...">`
-- Redirect URL configured to return to contact page with `?success=true` parameter
-- Form handler in `contact-form.js` detects the `?success=true` parameter and displays success message
-- Success message: "Message sent successfully! I'll get back to you soon." (green banner, auto-hides after 5 seconds)
-- Success/error messages displayed via `#form-status` element with CSS classes `.success` or `.error`
+**Contact Form Setup** (if adding a contact form):
 
-**How It Works**:
+- Form can be integrated with any backend service (FormSpree, Netlify Forms, custom API, etc.)
+- Success/error messages displayed via `#form-status` element with CSS classes
+- Form handler in `contact-form.js` provides client-side validation
 
-1. User fills out and submits form
-2. Form submits naturally to Web3Forms (bypasses CORS)
-3. Web3Forms sends email and redirects to: `http://localhost:3000/html/contact.html?success=true` (or production URL)
-4. JavaScript in `contact-form.js` checks for `?success=true` parameter on page load
-5. If found, displays green success message and clears the URL parameter
-6. Message auto-hides after 5 seconds
+**Configuration**:
 
-**To Update Web3Forms Access Key**:
+1. Choose a form backend service (FormSpree, Netlify Forms, or custom API endpoint)
+2. Update form action URL to point to your chosen service
+3. Configure redirect URL or success handling based on your service
+4. Update `contact-form.js` to match your backend's response format
 
-1. Get new access key from https://web3forms.com
-2. Update the `value` attribute in the hidden `access_key` input in `src/html/contact.html:143`
+**IMPORTANT**: The `.html` extension is REQUIRED in the redirect URL - without it, CloudFront will treat the path as non-existent and redirect to error.html instead of showing the success message.
 
-**To Update Redirect URL for Production**:
-
-1. In `src/html/contact.html:148`, change redirect URL from `http://localhost:3000/html/contact.html?success=true` to `https://dharambhushan.com/html/contact.html?success=true`
-2. This ensures the success message appears correctly in production
-3. **IMPORTANT**: The `.html` extension is REQUIRED - without it, CloudFront will treat the path as non-existent and redirect to error.html
-
-**Environment-Specific Configuration**:
-
-**IMPORTANT**: The contact form redirect URL in `src/html/contact.html` (line 148) must match your environment:
-
-- **Development**: `http://localhost:3000/html/contact.html?success=true`
-- **Production**: `https://dharambhushan.com/html/contact.html?success=true`
-
-This URL is hardcoded in the HTML form's hidden `redirect` input field and must be manually updated before production deployment. The `.html` extension is REQUIRED - without it, CloudFront will treat the redirect as a 404 and show the error page instead of the success message. This is a common source of issues if forgotten.
+**Note**: Contact form is optional. The template includes a single-page landing design by default.
 
 ### Error Page Configuration
 
@@ -526,8 +610,8 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 
 **Testing Error Page**:
 
-- Visit any non-existent URL (e.g., https://dharambhushan.com/nonexistent)
-- Should display custom error page with same branding
+- Visit any non-existent URL (e.g., https://your-domain.com/nonexistent)
+- Should display custom error page with consistent branding
 
 ### Performance Considerations
 
@@ -542,14 +626,14 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 
 **AWS S3 Bucket**:
 
-- Name: `dharam-personal-website-257641256327-us-east-1`
-- Region: us-east-1
+- Name: Auto-generated as `website-{accountId}-{region}` (e.g., `website-123456789012-us-east-1`)
+- Region: us-east-1 (required)
 - Configuration: Private, fully blocked public access
 - Access: CloudFront Origin Access Control (OAC) only
 
 **AWS CloudFront Distribution**:
 
-- Custom domain: `dharambhushan.com` and `www.dharambhushan.com`
+- Custom domains: `your-domain.com` and `www.your-domain.com`
 - Origin: S3 bucket via Origin Access Control (OAC)
 - SSL/TLS: ACM certificate in us-east-1
 - Cache policies: HTML (1 hour), Assets (1 year), Default (24 hours)
@@ -566,25 +650,26 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 **ACM Certificate**:
 
 - Region: us-east-1 (required for CloudFront)
-- Domain names: `dharambhushan.com`, `www.dharambhushan.com`
-- Validation: DNS validation via CloudFlare CNAME records
+- Domain names: `your-domain.com`, `www.your-domain.com`
+- Validation: DNS validation via CloudFlare or Route53 CNAME records
 - Renewal: Automatic by AWS
 
-**CloudFlare CDN**:
+**CloudFlare CDN** (optional but recommended):
 
 - SSL/TLS mode: Full (strict) - validates CloudFront certificate
-- DNS: CNAME `dharambhushan.com` → CloudFront domain
-- Proxy status: Enabled (orange cloud)
+- DNS: CNAME `your-domain.com` → CloudFront distribution domain
+- Proxy status: Enabled (orange cloud) - REQUIRED for WAF
 - Additional caching layer and DDoS protection
 
-**AWS Account**: 257641256327
-**Region**: us-east-1 (S3, CloudFront, WAF, CDK stack, ACM certificate)
+**AWS Configuration**:
+
+- Region: us-east-1 (S3, CloudFront, WAF, CDK stack, ACM certificate)
 
 ### Initial Infrastructure Deployment
 
 **Prerequisites**:
 
-1. Create ACM certificate in us-east-1 (see `docs/acm-certificate-setup.md`)
+1. Create ACM certificate in us-east-1 (see `docs/ACM_CERTIFICATE_SETUP.md`)
 2. Add DNS validation records in CloudFlare
 3. Wait for certificate validation (10-20 minutes)
 4. Set environment variable: `export CERTIFICATE_ARN='arn:aws:acm:us-east-1:...'`
@@ -592,27 +677,26 @@ This URL is hardcoded in the HTML form's hidden `redirect` input field and must 
 **Deploy Infrastructure**:
 
 ```bash
-# Export AWS credentials
-source ~/aws-credentials-export.zsh
-
 # Set environment variables
-export CDK_DEFAULT_ACCOUNT=257641256327
+export CDK_DEFAULT_ACCOUNT=123456789012  # Your AWS account ID
 export CDK_DEFAULT_REGION=us-east-1
-export CERTIFICATE_ARN='arn:aws:acm:us-east-1:257641256327:certificate/b30ce704-7d37-4200-9815-037c834bdf41'
+export CERTIFICATE_ARN='arn:aws:acm:us-east-1:123456789012:certificate/YOUR_CERT_ID'
+export DOMAIN_NAME='your-domain.com'
 
-# Bootstrap CDK (first time only)
+# Bootstrap CDK (first time only per account/region)
 npm run infra:bootstrap
 
 # Deploy CloudFront + WAF + S3 stack
 npm run infra:deploy
 ```
 
-**Stack Outputs** (current deployment):
+**Stack Outputs** (example):
 
-- `BucketName`: dharam-personal-website-257641256327-us-east-1
-- `DistributionId`: E14SW9FUYL655V (for cache invalidation)
-- `DistributionDomainName`: d25p12sd2oijz4.cloudfront.net (use as CloudFlare CNAME target)
+- `BucketName`: website-123456789012-us-east-1
+- `DistributionId`: E123456789ABCD (for cache invalidation)
+- `DistributionDomainName`: d123abc456def.cloudfront.net (use as CloudFlare CNAME target)
 - `WebACLArn`: WAF Web ACL ARN (CloudFlare IP filtering)
+- `WebsiteURL`: https://your-domain.com (if certificate provided)
 
 ### Configure CloudFlare DNS
 
@@ -622,23 +706,33 @@ After infrastructure deployment:
 2. Navigate to DNS → Records
 3. Add/Update CNAME record:
    - Name: `@`
-   - Target: `d25p12sd2oijz4.cloudfront.net` (CloudFront distribution domain)
-   - Proxy status: **Proxied** (orange cloud - REQUIRED)
-4. Go to SSL/TLS → Overview
-5. Set encryption mode: **Full (strict)** (validates CloudFront ACM certificate)
+   - Target: `{your-cloudfront-domain}.cloudfront.net` (from CDK stack output)
+   - Proxy status: **Proxied** (orange cloud - REQUIRED for WAF)
+4. Add WWW subdomain CNAME (optional):
+   - Name: `www`
+   - Target: `{your-cloudfront-domain}.cloudfront.net`
+   - Proxy status: **Proxied** (orange cloud)
+5. Go to SSL/TLS → Overview
+6. Set encryption mode: **Full (strict)** (validates CloudFront ACM certificate)
 
-See `docs/DEPLOYMENT_GUIDE.md` for detailed CloudFlare configuration.
+See `docs/DEPLOYMENT_GUIDE.md` and `docs/CLOUDFLARE_SETUP.md` for detailed configuration.
 
 ### Website Content Deployment
 
 **Deployment Flow**:
 
-1. Export AWS credentials: `source ~/aws-credentials-export.zsh`
+1. Set environment variables (if not already set):
+   ```bash
+   export S3_BUCKET_NAME='website-123456789012-us-east-1'
+   export CLOUDFRONT_DISTRIBUTION_ID='E123456789ABCD'
+   export CLOUDFLARE_ZONE_ID='your-zone-id'  # Optional
+   export CLOUDFLARE_API_TOKEN='your-token'  # Optional
+   ```
 2. `npm run build` - Build and validate website (via ./scripts/build.sh)
 3. `npm run deploy:s3` - Upload to S3 with cache headers (via ./scripts/deploy.sh)
 4. Invalidate caches:
-   - CloudFront: `aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"`
-   - CloudFlare: `npm run deploy:cloudflare` (via ./scripts/invalidate-cache.sh)
+   - CloudFront: Automatic via `npm run deploy`
+   - CloudFlare: `npm run deploy:cloudflare` (if configured)
 5. Verify: Check production URL, run Lighthouse audit
 
 **Cache Headers**:
@@ -658,18 +752,19 @@ See `docs/DEPLOYMENT_GUIDE.md` for detailed CloudFlare configuration.
 
 Before deploying to production, verify the following to avoid common issues:
 
-- [ ] **Contact form redirect URL** updated from `localhost:3000` to `https://dharambhushan.com` in `src/html/contact.html:148`
+- [ ] **Environment variables set**: All required env vars configured correctly
+- [ ] **Domain name updated**: Replace all localhost URLs with production domain
+- [ ] **Contact form configured**: Form backend service configured (if using contact form)
 - [ ] **All image paths** are relative (start with `/`) not absolute
-- [ ] **Web3Forms access key** is valid and configured correctly in `src/html/contact.html:143`
 - [ ] **All linters pass**: Run `npm run lint` with no errors
 - [ ] **Code formatting verified**: Run `npm run format:check` passes
 - [ ] **Performance audit**: Run `npm run lighthouse` and verify scores > 95
-- [ ] **Test contact form**: Submit test message end-to-end and verify email delivery
-- [ ] **Theme toggle**: Works correctly on all pages (index, ai_services, data_platform, leadership, contact)
-- [ ] **Neural network backgrounds**: Render correctly on all pages without console errors
-- [ ] **Image modals**: Open correctly for all service cards with diagrams
+- [ ] **Theme toggle**: Works correctly and persists across page refreshes
+- [ ] **Animations**: Scroll animations trigger correctly, respects prefers-reduced-motion
 - [ ] **Cross-browser testing**: Test on Chrome, Firefox, Safari, and mobile browsers
 - [ ] **Accessibility**: Run browser accessibility audit (Lighthouse or axe DevTools)
+- [ ] **SSL/TLS**: Verify HTTPS works and certificate is valid
+- [ ] **CloudFlare proxy**: Orange cloud enabled for WAF protection
 
 **Quick Validation Command**:
 
@@ -682,45 +777,38 @@ npm run validate:all && npm run lighthouse
 
 ### Adding a New Page
 
-1. Create HTML file in `/html/` directory (copy existing page structure from `ai_services.html`)
+1. Create HTML file in `/html/` directory (use `src/index.html` as reference)
 2. Update `<head>` section with appropriate SEO meta tags:
    - Update `<title>` and meta description
    - Add Open Graph tags (`og:title`, `og:description`, `og:url`, `og:image`)
    - Add Twitter Card tags (`twitter:title`, `twitter:description`, etc.)
-   - Add canonical URL: `<link rel="canonical" href="https://dharambhushan.com/html/page-name.html" />`
+   - Add canonical URL: `<link rel="canonical" href="https://your-domain.com/html/page-name.html" />`
    - Add Schema.org structured data with appropriate `@type` (WebPage, ContactPage, etc.)
    - Add resource preloading: `<link rel="preload" href="/css/main.css" as="style" />`
-3. Add neural network background container at top of `<body>`:
+3. Add animated background container (optional):
    ```html
-   <div id="page-name-background" class="neural-network-background"></div>
+   <div id="page-background" class="neural-network-background"></div>
    ```
-4. Update navigation links in all pages (header nav menu)
-5. Include standard scripts in order: `main.js`, `theme-toggle.js`, `animations.js`, `neural-network.js`, `analytics.js`
-6. Add neural network initialization in `js/neural-network.js` for the new page background ID
-7. Update sitemap.xml (if exists)
+4. Update navigation links in all pages (if using multi-page design)
+5. Include standard scripts in order: `main.js`, `theme-toggle.js`, `animations.js`, `analytics.js`
 
-### Adding a New AI/ML Service Card
+### Adding Content Cards
 
-1. Copy existing service card structure from `html/ai_services.html`
-2. Update: icon, title, description, impact metrics, tags
-3. Add `data-modal="service-name"` if including diagrams
-4. Create diagram PNG and add to `/assets/images/`
-5. Update `modal.js` imageMap with new service entry
+1. Create card structure using existing CSS classes in `components.css`
+2. Add: icon/image, title, description, call-to-action button
+3. Add `data-modal="unique-id"` if including images/diagrams
+4. Create diagram PNG (use https://mermaid.live/ for architecture diagrams)
+5. Store images in `/assets/images/` with descriptive naming
+6. Update `modal.js` imageMap if using modal functionality
 
-### Adding a New Data Platform Card
+### Creating Architecture Diagrams
 
-1. Copy existing platform card structure from `html/data_platform.html`
-2. Update: icon (emoji), title, description (focus on architecture and technical achievements)
-3. Update impact metrics with quantifiable results
-4. Add relevant tags (e.g., CDK, Data Lake, Medallion Architecture, etc.)
-5. If including architecture diagram:
-   - Add `data-modal="platform-name"` attribute to card
-   - Create Mermaid diagram in `/docs/platform-name-diagram.md`
-   - Export diagram as PNG from https://mermaid.live/
-   - Save as `/assets/images/platform_name__architecture.png` (note: double underscore)
-   - Add "View Architecture" button in `.card-actions` div
-   - Update `modal.js` imageMap with entry: `'platform-name': { architecture: '/assets/images/platform_name__architecture.png' }`
-6. Ensure `.card-actions` div is present for consistent button positioning (uses `margin-top: auto` for alignment)
+1. Write diagram in Mermaid syntax (see examples in `docs/` directory)
+2. Export as PNG from https://mermaid.live/
+3. Save to `/assets/images/` with descriptive filename
+4. Optimize image size (keep under 200KB if possible)
+5. Add to imageMap in `modal.js` if using modal display
+6. Update alt text in HTML for accessibility
 
 ### Updating Theme Colors
 
@@ -733,17 +821,20 @@ npm run validate:all && npm run lighthouse
 - Check browser console for errors (global error handler logs all errors)
 - Enable ESLint warnings: Check for `no-console`, `no-unused-vars` warnings
 - Use browser DevTools Network tab to verify resource loading
-- Check localStorage for theme preference: `localStorage.getItem('dharambhushan-theme')`
+- Check localStorage for theme preference: `localStorage.getItem('website-theme')`
+- Verify all scripts are loaded in correct order (check Network tab timing)
+- Test with different browsers and devices for compatibility issues
 
 ## Key Technical Decisions
 
 ### Why Vanilla JavaScript?
 
 - Zero framework overhead (saves ~40-150KB)
-- Faster initial load time (critical for first impressions)
+- Faster initial load time (critical for user experience and SEO)
 - Standard APIs, no framework lock-in
 - Any developer can contribute without framework knowledge
-- Portfolio site doesn't require complex state management
+- Static sites don't require complex state management
+- Easier to understand and debug for beginners
 
 ### Why No Build Step Required?
 
@@ -801,17 +892,18 @@ npm run validate:all && npm run lighthouse
 
 ### Theme Not Persisting
 
-- Check localStorage: `localStorage.getItem('dharambhushan-theme')`
+- Check localStorage: `localStorage.getItem('website-theme')`
 - Verify `theme-toggle.js` is loaded (check Network tab)
 - Clear browser cache and localStorage, test theme toggle
+- Ensure storage key matches between HTML and JavaScript
 
-### Contact Form Not Working
+### Contact Form Not Working (if implemented)
 
-- Verify the hidden `access_key` input field in `src/html/contact.html` has a valid Web3Forms access key
 - Check browser console for JavaScript errors during form submission
-- Test form submission and check Network tab for Web3Forms API response (should POST to `https://api.web3forms.com/submit`)
-- Verify form action is set to `https://api.web3forms.com/submit`
-- Check that all required form fields (name, email, subject, message) are present
+- Verify form action URL points to your chosen backend service
+- Test form submission and check Network tab for API response
+- Verify redirect URL or success handling is configured correctly
+- Check that all required form fields are present and validated
 
 ### Development Server Not Starting
 
@@ -829,9 +921,10 @@ npm run validate:all && npm run lighthouse
 
 **CloudFront Distribution Creation Failed**:
 
-- Verify ACM certificate ARN is correct
-- Check that certificate includes both `dharambhushan.com` and `www.dharambhushan.com`
+- Verify ACM certificate ARN is correct and valid
+- Check that certificate includes your domain and www subdomain
 - Ensure WAF Web ACL was created successfully (check CloudFormation events)
+- Verify certificate status is "Issued" (not "Pending Validation")
 
 **WAF Blocking Legitimate Traffic**:
 
@@ -868,27 +961,26 @@ npm run validate:all && npm run lighthouse
 
 ## Project Structure Notes
 
-**Source Files**: All website files are in `src/` directory (moved from root in Oct 2025 refactor)
+**Source Files**: All website files are in `src/` directory
 **Development Server**: `npm run dev` serves from `src/` directory on http://localhost:3000
 **Infrastructure as Code**: CloudFront + WAF + S3 deployed via AWS CDK in TypeScript (`infrastructure/` directory)
-**Infrastructure Stack**: `DharamBhushanWebsite-production` (CloudFormation stack)
-**S3 Bucket**: dharam-personal-website-257641256327-us-east-1 (private, OAC access only)
-**CloudFront Distribution**: E14SW9FUYL655V (custom domain `dharambhushan.com` with ACM certificate)
-**CloudFront Domain**: d25p12sd2oijz4.cloudfront.net (use as CloudFlare CNAME target)
+**Infrastructure Stack**: `Website-production` (CloudFormation stack name)
+**S3 Bucket**: Auto-generated as `website-{accountId}-{region}` (private, OAC access only)
+**CloudFront Distribution**: Created by CDK (custom domain with ACM certificate)
+**CloudFront Domain**: From CDK stack output (use as CloudFlare CNAME target)
 **AWS WAF**: CloudFlare IP filtering (IPv4 + IPv6 ranges)
-**AWS Account**: 257641256327
 **Region**: us-east-1 (all resources including S3, CloudFront, WAF, CDK stack, ACM certificate)
-**AWS Credentials**: Use `source ~/aws-credentials-export.zsh` to export via IAM Roles Anywhere
 **Deployment Scripts**: Bash scripts in `scripts/` for automated build, deploy, and cache invalidation
 **Build Output**: Minified assets go to `dist/` directory (git-ignored)
+
+**Cost**: ~$15/month (S3 storage + CloudFront requests + Route53 hosted zone)
 
 ## Additional Documentation
 
 - **docs/DEPLOYMENT_GUIDE.md**: Complete deployment guide for CloudFront + WAF + CloudFlare architecture, step-by-step setup, security configuration, troubleshooting
-- **docs/acm-certificate-setup.md**: ACM certificate creation in us-east-1 for CloudFront, DNS validation, certificate renewal
-- **docs/cloudflare-setup.md**: CloudFlare CDN configuration guide, DNS setup, SSL/TLS configuration, caching rules
+- **docs/ACM_CERTIFICATE_SETUP.md**: ACM certificate creation in us-east-1 for CloudFront, DNS validation, certificate renewal
+- **docs/CLOUDFLARE_SETUP.md**: CloudFlare CDN configuration guide, DNS setup, SSL/TLS configuration, caching rules
 - **infrastructure/README.md**: AWS CDK infrastructure documentation, CloudFront + WAF + S3 stack details, deployment commands
-- **ARCHITECTURE.md**: Comprehensive architectural documentation (1500+ lines) covering component architecture, deployment, performance strategy, code quality infrastructure
 - **README.md**: Setup instructions, deployment workflow, environment variables, troubleshooting
 - **package.json**: All npm scripts and dependencies listed with descriptions
 
@@ -901,13 +993,13 @@ This is the main CDK stack definition that creates all AWS infrastructure:
 **Key Components**:
 
 1. **S3 Bucket** (Private):
-   - Name: `dharam-personal-website-257641256327-us-east-1`
-   - Region: us-east-1
+   - Name: Auto-generated as `website-{accountId}-{region}`
+   - Region: us-east-1 (required for CloudFront)
    - Block all public access
    - Versioning enabled for rollback
-   - S3-managed encryption
-   - Lifecycle rules for old versions (90 days)
-   - CORS configuration for web fonts
+   - S3-managed encryption (AES-256)
+   - Lifecycle rules for old versions (90 days retention)
+   - CORS configuration for web fonts and assets
 
 2. **CloudFlare IP Sets** (for WAF):
    - IPv4 IP Set: 15 CloudFlare IPv4 ranges
@@ -922,18 +1014,18 @@ This is the main CDK stack definition that creates all AWS infrastructure:
    - CloudWatch metrics enabled
 
 4. **CloudFront Distribution**:
-   - Distribution ID: E14SW9FUYL655V
-   - Domain: d25p12sd2oijz4.cloudfront.net
-   - Custom domains: `dharambhushan.com`, `www.dharambhushan.com`
+   - Distribution ID: From CDK stack output
+   - Domain: `{random}.cloudfront.net` (from CDK stack output)
+   - Custom domains: `your-domain.com`, `www.your-domain.com` (from environment variables)
    - Origin: S3 bucket via Origin Access Control (OAC)
-   - ACM certificate in us-east-1 (b30ce704-7d37-4200-9815-037c834bdf41)
+   - ACM certificate: From `CERTIFICATE_ARN` environment variable (must be in us-east-1)
    - Default behavior: REDIRECT_TO_HTTPS, cache 24 hours
    - Additional behavior for `*.html`: cache 1 hour
    - Additional behavior for `/assets/*`: cache 365 days
    - Error responses: 403/404 → 404 with `/error.html` (custom error page)
    - HTTP/2 and HTTP/3 enabled
    - Gzip and Brotli compression
-   - WAF attached
+   - WAF attached for IP filtering
 
 5. **S3 Bucket Policy**:
    - Allow `s3:GetObject` from CloudFront service principal only
@@ -953,20 +1045,20 @@ CDK app entry point that configures the stack:
 
 **Configuration Parameters**:
 
-- `bucketName`: From context or env (`dharam-personal-website-257641256327-us-east-1`)
-- `domainName`: From context or env (`dharambhushan.com`)
-- `certificateArn`: From context or env (ACM cert ARN in us-east-1)
-- `environment`: From context or env (`production`)
-- `awsAccount`: From env `CDK_DEFAULT_ACCOUNT` (257641256327)
-- `awsRegion`: From env `CDK_DEFAULT_REGION` (us-east-1)
-- **Note**: Bucket name includes region suffix for uniqueness
+- `bucketName`: Auto-generated as `website-{accountId}-{region}` or from context
+- `domainName`: From `DOMAIN_NAME` environment variable (e.g., `your-domain.com`)
+- `certificateArn`: From `CERTIFICATE_ARN` environment variable (ACM cert ARN in us-east-1)
+- `environment`: From context or defaults to `production`
+- `awsAccount`: From `CDK_DEFAULT_ACCOUNT` environment variable (12 digits)
+- `awsRegion`: From `CDK_DEFAULT_REGION` environment variable (us-east-1 required)
+- **Note**: Bucket name includes account ID and region for global uniqueness
 
 **Tags Applied**:
 
-- Project: DharamBhushanPortfolio
-- Environment: production
+- Project: Website (or custom from environment)
+- Environment: production (or custom from environment)
 - ManagedBy: AWS-CDK
-- Domain: dharambhushan.com
+- Domain: From `DOMAIN_NAME` environment variable
 
 ### Updating CloudFlare IP Ranges
 

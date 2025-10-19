@@ -1,5 +1,5 @@
 /**
- * Analytics - dharambhushan.com
+ * Analytics
  * Privacy-focused tracking and performance monitoring
  */
 

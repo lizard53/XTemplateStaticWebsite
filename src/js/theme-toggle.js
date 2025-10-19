@@ -1,5 +1,5 @@
 /**
- * Theme Toggle - dharambhushan.com
+ * Theme Toggle
  * Dark/Light mode switcher with persistence
  */
 
@@ -9,7 +9,7 @@
 // THEME CONFIGURATION
 // ==========================================
 
-const THEME_KEY = 'dharambhushan-theme';
+const THEME_KEY = 'website-theme';
 const THEMES = {
   DARK: 'dark',
   LIGHT: 'light',
@@ -21,8 +21,8 @@ const THEMES = {
 
 class ThemeManager {
   constructor() {
-    this.currentTheme = this.getStoredTheme() || this.getSystemPreference() || THEMES.DARK;
-    this.themeToggle = document.getElementById('theme-toggle');
+    this.currentTheme = this.getStoredTheme() || this.getSystemPreference() || THEMES.LIGHT;
+    this.themeToggle = document.querySelector('.theme-toggle');
 
     this.init();
   }
@@ -98,10 +98,16 @@ class ThemeManager {
       }
     }
 
-    // Update toggle button aria-label
+    // Update toggle button aria-label and icon
     if (this.themeToggle) {
       const label = theme === THEMES.DARK ? 'Switch to light mode' : 'Switch to dark mode';
       this.themeToggle.setAttribute('aria-label', label);
+
+      // Update icon emoji
+      const icon = this.themeToggle.querySelector('.theme-icon');
+      if (icon) {
+        icon.textContent = theme === THEMES.DARK ? '☀️' : '🌙';
+      }
     }
 
     // Dispatch custom event for other scripts to listen to
@@ -208,7 +214,7 @@ window.themeManager = themeManager;
     window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';
-  const theme = storedTheme || systemTheme || 'dark';
+  const theme = storedTheme || systemTheme || 'light';
 
   document.documentElement.setAttribute('data-theme', theme);
 })();

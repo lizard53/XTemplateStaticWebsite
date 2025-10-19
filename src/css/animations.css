@@ -1,5 +1,5 @@
 /* ==========================================
-   ANIMATION STYLES - dharambhushan.com
+   ANIMATION STYLES - Professional Website Template
    Micro-interactions and scroll effects
    ========================================== */
 
@@ -105,10 +105,10 @@
 /* Elements hidden until scrolled into view */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(20px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reveal.active {
@@ -118,10 +118,10 @@
 
 .reveal-left {
   opacity: 0;
-  transform: translateX(-50px);
+  transform: translateX(-30px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reveal-left.active {
@@ -131,10 +131,10 @@
 
 .reveal-right {
   opacity: 0;
-  transform: translateX(50px);
+  transform: translateX(30px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reveal-right.active {
@@ -144,10 +144,10 @@
 
 .reveal-scale {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.95);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reveal-scale.active {
